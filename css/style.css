@@ -122,6 +122,7 @@ a:hover { color: var(--ice2); }
   position: absolute; inset: 0; opacity: 0;
 }
 .act-layer.is-active { opacity: 1; }
+#pan-canvas { background: #05070a url('../assets/screen-zoom.jpg') center / cover no-repeat; }
 
 #hero-glow {
   position: absolute; inset: 0; opacity: 0; pointer-events: none;

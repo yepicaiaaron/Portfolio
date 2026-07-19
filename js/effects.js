@@ -290,6 +290,8 @@
     const FRAME_URLS = window.PAN_FRAMES || [];
     const frames = new Array(FRAME_URLS.length).fill(null);
     let framesRequested = false;
+    let framesAvailable = null;
+    let frameProbeRequested = false;
     let panCtx = null;
     let lastDrawn = -1;
 
@@ -306,6 +308,23 @@
     // immediately (nearest-loaded fallback fills the gaps), then the rest.
     function preloadFrames() {
       if (framesRequested || !FRAME_URLS.length) return;
+      if (framesAvailable === false) return;
+      if (framesAvailable === null) {
+        if (frameProbeRequested) return;
+        frameProbeRequested = true;
+        const probe = new Image();
+        probe.onload = () => {
+          framesAvailable = true;
+          frameProbeRequested = false;
+          preloadFrames();
+        };
+        probe.onerror = () => {
+          framesAvailable = false;
+          frameProbeRequested = false;
+        };
+        probe.src = FRAME_URLS[0];
+        return;
+      }
       framesRequested = true;
       for (let i = 0; i < FRAME_URLS.length; i += 6) loadFrame(i);
       setTimeout(() => { for (let i = 0; i < FRAME_URLS.length; i++) loadFrame(i); }, 800);
@@ -488,4 +507,3 @@
   const yr = document.getElementById('year');
   if (yr) yr.textContent = new Date().getFullYear();
 })();
-
