@@ -1,149 +1,156 @@
 (function () {
   'use strict';
 
-  const building = document.querySelector('#mind-os.three-worlds');
-  if (!building) return;
+  const journey = document.querySelector('.journey-v5');
+  if (!journey) return;
 
-  const scenes = Array.from(building.querySelectorAll('.world-scene'));
-  const navItems = Array.from(building.querySelectorAll('.world-nav-item'));
-  const jumpButtons = Array.from(building.querySelectorAll('[data-jump-world]'));
-  const progressBar = building.querySelector('.world-progress span');
-  const shell = building.querySelector('.worlds-shell');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mobile = () => window.matchMedia('(max-width: 760px)').matches;
-  const hasGSAP = typeof window.gsap !== 'undefined';
-  const gsap = window.gsap;
-  let activeIndex = -1;
+  const moments = Array.from(journey.querySelectorAll('.story-moment'));
+  const roomLinks = Array.from(journey.querySelectorAll('[data-room-link]'));
+  const progress = journey.querySelector('.journey-line i');
+  const counter = journey.querySelector('.journey-counter b');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasGSAP = Boolean(window.gsap && window.ScrollTrigger);
+  let currentMoment = -1;
+  let ticking = false;
 
-  if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
+  document.documentElement.classList.add('journey-ready');
+  journey.dataset.activeRoom = 'threshold';
 
-  function sceneParts(scene) {
-    return {
-      intro: scene.querySelector('.map-intro, .room-intro, .stage-copy'),
-      objects: scene.querySelectorAll('.room-object'),
-      stories: scene.querySelectorAll('.story-trigger'),
-      background: scene.querySelectorAll('.parallax-layer'),
-      ticker: scene.querySelector('.stage-ticker')
-    };
-  }
+  function setActiveMoment(index) {
+    if (index < 0 || index >= moments.length || index === currentMoment) return;
+    currentMoment = index;
 
-  function activateScene(index, immediate) {
-    index = Math.max(0, Math.min(scenes.length - 1, index));
-    if (index === activeIndex) return;
+    const active = moments[index];
+    const room = active.dataset.room || 'threshold';
+    journey.dataset.activeRoom = room;
 
-    const previous = activeIndex >= 0 ? scenes[activeIndex] : null;
-    const next = scenes[index];
-    activeIndex = index;
-
-    scenes.forEach((scene, i) => {
-      const selected = i === index;
-      scene.classList.toggle('is-active', selected);
-      scene.setAttribute('aria-hidden', selected ? 'false' : 'true');
+    moments.forEach((moment, momentIndex) => {
+      moment.classList.toggle('is-current', momentIndex === index);
     });
-    navItems.forEach((item, i) => item.classList.toggle('is-active', i === index));
 
-    if (!hasGSAP || reduceMotion || immediate || mobile()) return;
+    roomLinks.forEach((link) => {
+      const selected = link.dataset.roomLink === room;
+      link.classList.toggle('is-active', selected);
+      if (selected) link.setAttribute('aria-current', 'step');
+      else link.removeAttribute('aria-current');
+    });
 
-    if (previous) gsap.set(previous, { autoAlpha: 0 });
-    gsap.set(next, { autoAlpha: 1 });
-    const parts = sceneParts(next);
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-    if (parts.intro) tl.fromTo(parts.intro, { y: 46, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8 });
-    if (parts.background.length) tl.fromTo(parts.background, { scale: 1.08, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.1, stagger: .08 }, 0);
-    if (parts.objects.length) tl.fromTo(parts.objects, { y: 45, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .7, stagger: .09 }, .18);
-    if (parts.stories.length) tl.fromTo(parts.stories, { x: -28, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: .45, stagger: .07 }, .34);
-    if (parts.ticker) tl.fromTo(parts.ticker, { x: 90, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: .8 }, .45);
+    if (counter) counter.textContent = String(index + 1).padStart(2, '0');
   }
 
-  function scrollProgress() {
-    const rect = building.getBoundingClientRect();
-    const total = building.offsetHeight - window.innerHeight;
-    return total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
+  function updateProgress() {
+    const rect = journey.getBoundingClientRect();
+    const scrollable = journey.offsetHeight - window.innerHeight;
+    const value = scrollable > 0 ? Math.max(0, Math.min(1, -rect.top / scrollable)) : 0;
+    if (progress) progress.style.transform = 'scaleY(' + value.toFixed(4) + ')';
+    ticking = false;
   }
 
-  function updateFromProgress(progress) {
-    const safe = Math.max(0, Math.min(.9999, progress));
-    activateScene(Math.floor(safe * scenes.length), false);
-    if (progressBar) {
-      if (hasGSAP) gsap.set(progressBar, { scaleX: progress });
-      else progressBar.style.transform = 'scaleX(' + progress + ')';
-    }
-  }
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateProgress);
+  }, { passive: true });
 
-  function moveToScene(index) {
-    index = Math.max(0, Math.min(scenes.length - 1, index));
-    if (mobile() || reduceMotion) {
-      activateScene(index, false);
-      shell.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-      return;
-    }
+  const observer = new IntersectionObserver(function (entries) {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    setActiveMoment(moments.indexOf(visible.target));
+  }, {
+    rootMargin: '-24% 0px -24% 0px',
+    threshold: [0, .2, .4, .6, .8]
+  });
 
-    const total = building.offsetHeight - window.innerHeight;
-    const targetProgress = (index + .5) / scenes.length;
-    window.scrollTo({ top: building.offsetTop + total * targetProgress, behavior: 'smooth' });
-  }
+  moments.forEach((moment) => observer.observe(moment));
 
-  navItems.forEach((item, index) => item.addEventListener('click', () => moveToScene(index)));
-  jumpButtons.forEach((item) => item.addEventListener('click', () => moveToScene(Number(item.dataset.jumpWorld || 0))));
-
-  building.querySelectorAll('.world-scene').forEach((scene) => {
-    const triggers = Array.from(scene.querySelectorAll('[data-story-target]'));
-    const cards = Array.from(scene.querySelectorAll('[data-story-card]'));
-
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const target = trigger.dataset.storyTarget;
-        triggers.forEach((item) => item.classList.toggle('is-selected', item === trigger));
-        cards.forEach((card) => card.classList.toggle('is-selected', card.dataset.storyCard === target));
-
-        if (hasGSAP && !reduceMotion) {
-          const card = cards.find((item) => item.dataset.storyCard === target);
-          if (card) gsap.fromTo(card, { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45, ease: 'power3.out' });
-        }
-      });
+  roomLinks.forEach((link) => {
+    link.addEventListener('click', function (event) {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
   });
 
-  if (hasGSAP && window.ScrollTrigger && !mobile() && !reduceMotion) {
-    window.ScrollTrigger.create({
-      trigger: building,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => updateFromProgress(self.progress)
-    });
-  } else if (!mobile() && !reduceMotion) {
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        updateFromProgress(scrollProgress());
-        ticking = false;
-      });
-    }, { passive: true });
+  function scrambleOnce(element) {
+    if (!element || reducedMotion || element.dataset.scrambled === 'true') return;
+    element.dataset.scrambled = 'true';
+    const finalText = element.textContent.trim();
+    const glyphs = '01{}[]<>/\\*+#$%';
+    const start = performance.now();
+    const duration = 900;
+
+    function draw(now) {
+      const value = Math.min(1, (now - start) / duration);
+      const settled = Math.floor(finalText.length * value);
+      element.textContent = Array.from(finalText).map(function (character, index) {
+        if (character === ' ' || index < settled || value === 1) return character;
+        return glyphs[Math.floor(Math.random() * glyphs.length)];
+      }).join('');
+      if (value < 1) requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
   }
 
-  if (!reduceMotion && !mobile()) {
-    shell.addEventListener('pointermove', (event) => {
-      const rect = shell.getBoundingClientRect();
-      const dx = (event.clientX - rect.left) / rect.width - .5;
-      const dy = (event.clientY - rect.top) / rect.height - .5;
-      const active = scenes[activeIndex];
-      if (!active) return;
+  const thresholdAnswer = journey.querySelector('.threshold-answer');
+  const thresholdObserver = new IntersectionObserver(function (entries) {
+    if (entries.some((entry) => entry.isIntersecting)) {
+      scrambleOnce(thresholdAnswer);
+      thresholdObserver.disconnect();
+    }
+  }, { threshold: .55 });
+  if (thresholdAnswer) thresholdObserver.observe(thresholdAnswer);
 
-      active.querySelectorAll('.parallax-layer').forEach((layer) => {
-        const depth = Number(layer.dataset.depth || .5);
-        if (hasGSAP) gsap.to(layer, { x: dx * 25 * depth, y: dy * 18 * depth, duration: .55, overwrite: 'auto' });
+  if (hasGSAP && !reducedMotion) {
+    window.gsap.registerPlugin(window.ScrollTrigger);
+
+    moments.forEach(function (moment, index) {
+      const copy = moment.querySelector('.moment-copy');
+      const artefact = moment.querySelector('.artefact');
+      const opening = moment.querySelector('.room-manifesto');
+      const sequence = moment.querySelector('.signal-sequence, .audience-sequence, .talk-list, .scale-proof, .delivery-ledger');
+
+      const timeline = window.gsap.timeline({
+        scrollTrigger: {
+          trigger: moment,
+          start: 'top 72%',
+          toggleActions: 'play none none reverse'
+        },
+        defaults: { ease: 'power3.out' }
       });
+
+      if (opening) {
+        timeline.from(opening, { y: 70, autoAlpha: 0, duration: 1.05 }, 0);
+      }
+
+      if (copy) {
+        timeline.from(copy.children, { y: 42, autoAlpha: 0, duration: .8, stagger: .1 }, 0);
+      }
+
+      if (artefact) {
+        timeline.from(artefact, { y: 70, rotate: index % 2 ? 1.5 : -1.5, autoAlpha: 0, duration: 1.1 }, .12);
+        window.gsap.fromTo(artefact,
+          { yPercent: 5 },
+          { yPercent: -5, ease: 'none', scrollTrigger: { trigger: moment, start: 'top bottom', end: 'bottom top', scrub: 1.2 } }
+        );
+      }
+
+      if (sequence) {
+        timeline.from(sequence.children, { y: 50, autoAlpha: 0, duration: .75, stagger: .13 }, .06);
+      }
+    });
+
+    journey.querySelectorAll('.studio-contact-sheet figure, .stage-hero-image').forEach(function (element) {
+      window.gsap.fromTo(element,
+        { yPercent: -4 },
+        { yPercent: 5, ease: 'none', scrollTrigger: { trigger: element.closest('.story-moment'), start: 'top bottom', end: 'bottom top', scrub: 1.4 } }
+      );
     });
   }
 
-  activateScene(0, true);
-  updateFromProgress(mobile() ? 0 : scrollProgress());
-
-  window.addEventListener('resize', () => {
-    if (window.ScrollTrigger) window.ScrollTrigger.refresh();
-    if (mobile()) activateScene(Math.max(0, activeIndex), true);
-  });
+  setActiveMoment(0);
+  updateProgress();
 })();
