@@ -1,65 +1,29 @@
 (function () {
   'use strict';
 
-  const mind = document.getElementById('mind-os');
-  if (!mind) return;
+  const building = document.querySelector('#mind-os.three-worlds');
+  if (!building) return;
 
-  const scenes = Array.from(mind.querySelectorAll('.os-scene'));
-  const dock = mind.querySelector('.os-dock');
-  const dockItems = Array.from(mind.querySelectorAll('.dock-item'));
-  const progressBar = mind.querySelector('.os-progress span');
-  const grid = mind.querySelector('.os-grid');
-  const frame = mind.querySelector('.os-frame');
+  const scenes = Array.from(building.querySelectorAll('.world-scene'));
+  const navItems = Array.from(building.querySelectorAll('.world-nav-item'));
+  const jumpButtons = Array.from(building.querySelectorAll('[data-jump-world]'));
+  const progressBar = building.querySelector('.world-progress span');
+  const shell = building.querySelector('.worlds-shell');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mobile = () => window.matchMedia('(max-width: 720px)').matches;
+  const mobile = () => window.matchMedia('(max-width: 760px)').matches;
   const hasGSAP = typeof window.gsap !== 'undefined';
   const gsap = window.gsap;
   let activeIndex = -1;
-  let scrambleToken = 0;
 
-  if (hasGSAP && window.ScrollTrigger) {
-    gsap.registerPlugin(window.ScrollTrigger);
-  }
-
-  function scramble(el) {
-    if (!el) return;
-    const finalText = el.dataset.scramble || el.textContent;
-    if (reduceMotion) {
-      el.textContent = finalText;
-      return;
-    }
-
-    const glyphs = '01{}[]<>/\\*+#$%ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const token = ++scrambleToken;
-    const started = performance.now();
-    const duration = 1050;
-
-    function frameText(now) {
-      if (token !== scrambleToken) return;
-      const progress = Math.min(1, (now - started) / duration);
-      const settled = Math.floor(progress * finalText.length);
-      let next = '';
-      for (let i = 0; i < finalText.length; i++) {
-        const char = finalText[i];
-        if (char === ' ') next += ' ';
-        else if (i < settled || progress === 1) next += char;
-        else next += glyphs[(Math.random() * glyphs.length) | 0];
-      }
-      el.textContent = next;
-      if (progress < 1) requestAnimationFrame(frameText);
-    }
-
-    requestAnimationFrame(frameText);
-  }
+  if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
 
   function sceneParts(scene) {
     return {
-      left: scene.querySelector('.os-window--left'),
-      right: scene.querySelector('.os-window--right'),
-      copy: scene.querySelector('.os-center-copy'),
-      proof: scene.querySelector('.os-proof-strip'),
-      intro: scene.querySelector('.os-intro'),
-      orbits: scene.querySelectorAll('.os-orbit')
+      intro: scene.querySelector('.map-intro, .room-intro, .stage-copy'),
+      objects: scene.querySelectorAll('.room-object'),
+      stories: scene.querySelectorAll('.story-trigger'),
+      background: scene.querySelectorAll('.parallax-layer'),
+      ticker: scene.querySelector('.stage-ticker')
     };
   }
 
@@ -72,129 +36,113 @@
     activeIndex = index;
 
     scenes.forEach((scene, i) => {
-      scene.classList.toggle('is-active', i === index);
-      scene.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+      const selected = i === index;
+      scene.classList.toggle('is-active', selected);
+      scene.setAttribute('aria-hidden', selected ? 'false' : 'true');
     });
-    dockItems.forEach((item, i) => item.classList.toggle('is-active', i === index));
+    navItems.forEach((item, i) => item.classList.toggle('is-active', i === index));
 
-    if (mobile() || reduceMotion || immediate || !hasGSAP) {
-      if (hasGSAP) gsap.set(next, { autoAlpha: 1 });
-      if (index === 0) scramble(next.querySelector('[data-scramble]'));
-      return;
-    }
+    if (!hasGSAP || reduceMotion || immediate || mobile()) return;
 
     if (previous) gsap.set(previous, { autoAlpha: 0 });
     gsap.set(next, { autoAlpha: 1 });
     const parts = sceneParts(next);
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    if (parts.intro) {
-      timeline.fromTo(parts.intro, { y: 42, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .75 });
-      if (parts.orbits.length) {
-        timeline.fromTo(parts.orbits, { scale: .8, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .5, stagger: .08 }, '-=.35');
-      }
-      scramble(next.querySelector('[data-scramble]'));
-    } else {
-      if (parts.left) timeline.fromTo(parts.left, { x: -150, rotate: -2, autoAlpha: 0 }, { x: 0, rotate: 0, autoAlpha: 1, duration: .78 }, 0);
-      if (parts.right) timeline.fromTo(parts.right, { x: 150, rotate: 2, autoAlpha: 0 }, { x: 0, rotate: 0, autoAlpha: 1, duration: .78 }, .05);
-      if (parts.copy) timeline.fromTo(parts.copy, { y: 62, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .68 }, .18);
-      if (parts.proof) timeline.fromTo(parts.proof.children, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .42, stagger: .045 }, .36);
-    }
+    if (parts.intro) tl.fromTo(parts.intro, { y: 46, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8 });
+    if (parts.background.length) tl.fromTo(parts.background, { scale: 1.08, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.1, stagger: .08 }, 0);
+    if (parts.objects.length) tl.fromTo(parts.objects, { y: 45, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .7, stagger: .09 }, .18);
+    if (parts.stories.length) tl.fromTo(parts.stories, { x: -28, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: .45, stagger: .07 }, .34);
+    if (parts.ticker) tl.fromTo(parts.ticker, { x: 90, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: .8 }, .45);
+  }
+
+  function scrollProgress() {
+    const rect = building.getBoundingClientRect();
+    const total = building.offsetHeight - window.innerHeight;
+    return total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
   }
 
   function updateFromProgress(progress) {
-    const p = Math.max(0, Math.min(0.9999, progress));
-    const index = Math.floor(p * scenes.length);
-    activateScene(index, false);
-
+    const safe = Math.max(0, Math.min(.9999, progress));
+    activateScene(Math.floor(safe * scenes.length), false);
     if (progressBar) {
       if (hasGSAP) gsap.set(progressBar, { scaleX: progress });
       else progressBar.style.transform = 'scaleX(' + progress + ')';
     }
+  }
 
-    if (grid && !reduceMotion) {
-      const x = Math.sin(progress * Math.PI * 4) * 13;
-      const y = progress * -32;
-      if (hasGSAP) gsap.set(grid, { x, y });
-      else grid.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+  function moveToScene(index) {
+    index = Math.max(0, Math.min(scenes.length - 1, index));
+    if (mobile() || reduceMotion) {
+      activateScene(index, false);
+      shell.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      return;
     }
+
+    const total = building.offsetHeight - window.innerHeight;
+    const targetProgress = (index + .5) / scenes.length;
+    window.scrollTo({ top: building.offsetTop + total * targetProgress, behavior: 'smooth' });
   }
 
-  function scrollProgress() {
-    const rect = mind.getBoundingClientRect();
-    const total = mind.offsetHeight - window.innerHeight;
-    return total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
-  }
+  navItems.forEach((item, index) => item.addEventListener('click', () => moveToScene(index)));
+  jumpButtons.forEach((item) => item.addEventListener('click', () => moveToScene(Number(item.dataset.jumpWorld || 0))));
+
+  building.querySelectorAll('.world-scene').forEach((scene) => {
+    const triggers = Array.from(scene.querySelectorAll('[data-story-target]'));
+    const cards = Array.from(scene.querySelectorAll('[data-story-card]'));
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const target = trigger.dataset.storyTarget;
+        triggers.forEach((item) => item.classList.toggle('is-selected', item === trigger));
+        cards.forEach((card) => card.classList.toggle('is-selected', card.dataset.storyCard === target));
+
+        if (hasGSAP && !reduceMotion) {
+          const card = cards.find((item) => item.dataset.storyCard === target);
+          if (card) gsap.fromTo(card, { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45, ease: 'power3.out' });
+        }
+      });
+    });
+  });
 
   if (hasGSAP && window.ScrollTrigger && !mobile() && !reduceMotion) {
     window.ScrollTrigger.create({
-      trigger: mind,
+      trigger: building,
       start: 'top top',
       end: 'bottom bottom',
-      onUpdate: function (self) { updateFromProgress(self.progress); }
+      onUpdate: (self) => updateFromProgress(self.progress)
     });
   } else if (!mobile() && !reduceMotion) {
     let ticking = false;
-    window.addEventListener('scroll', function () {
+    window.addEventListener('scroll', () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(function () {
+      requestAnimationFrame(() => {
         updateFromProgress(scrollProgress());
         ticking = false;
       });
     }, { passive: true });
   }
 
-  dockItems.forEach((item, index) => {
-    item.addEventListener('click', function () {
-      if (mobile() || reduceMotion) {
-        activateScene(index, false);
-        frame.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-        return;
-      }
-
-      const total = mind.offsetHeight - window.innerHeight;
-      const targetProgress = (index + .5) / scenes.length;
-      window.scrollTo({ top: mind.offsetTop + total * targetProgress, behavior: 'smooth' });
-    });
-  });
-
-  if (dock && !mobile() && !reduceMotion) {
-    dock.addEventListener('mousemove', function (event) {
-      dockItems.forEach((item) => {
-        const rect = item.getBoundingClientRect();
-        const centre = rect.left + rect.width / 2;
-        const distance = Math.abs(event.clientX - centre);
-        const influence = Math.max(0, 1 - distance / 115);
-        item.style.setProperty('--dock-scale', (1 + influence * .62).toFixed(3));
-      });
-    });
-
-    dock.addEventListener('mouseleave', function () {
-      dockItems.forEach((item) => item.style.setProperty('--dock-scale', '1'));
-    });
-  }
-
-  if (frame && !reduceMotion && !mobile()) {
-    frame.addEventListener('pointermove', function (event) {
-      const rect = frame.getBoundingClientRect();
+  if (!reduceMotion && !mobile()) {
+    shell.addEventListener('pointermove', (event) => {
+      const rect = shell.getBoundingClientRect();
       const dx = (event.clientX - rect.left) / rect.width - .5;
       const dy = (event.clientY - rect.top) / rect.height - .5;
       const active = scenes[activeIndex];
       if (!active) return;
-      const left = active.querySelector('.os-window--left');
-      const right = active.querySelector('.os-window--right');
-      if (hasGSAP) {
-        if (left) gsap.to(left, { x: dx * 10, y: dy * 7, duration: .45, overwrite: 'auto' });
-        if (right) gsap.to(right, { x: dx * -10, y: dy * -7, duration: .45, overwrite: 'auto' });
-      }
+
+      active.querySelectorAll('.parallax-layer').forEach((layer) => {
+        const depth = Number(layer.dataset.depth || .5);
+        if (hasGSAP) gsap.to(layer, { x: dx * 25 * depth, y: dy * 18 * depth, duration: .55, overwrite: 'auto' });
+      });
     });
   }
 
   activateScene(0, true);
   updateFromProgress(mobile() ? 0 : scrollProgress());
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     if (window.ScrollTrigger) window.ScrollTrigger.refresh();
     if (mobile()) activateScene(Math.max(0, activeIndex), true);
   });

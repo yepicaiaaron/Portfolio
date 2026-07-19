@@ -12,7 +12,12 @@ await Promise.all([
   mkdir(metadata, { recursive: true })
 ]);
 
-await cp(new URL('../public/portfolio/', import.meta.url), client, { recursive: true });
+await Promise.all([
+  cp(new URL('../index.html', import.meta.url), new URL('index.html', client)),
+  cp(new URL('../assets/', import.meta.url), new URL('assets/', client), { recursive: true }),
+  cp(new URL('../css/', import.meta.url), new URL('css/', client), { recursive: true }),
+  cp(new URL('../js/', import.meta.url), new URL('js/', client), { recursive: true })
+]);
 await cp(new URL('../.openai/hosting.json', import.meta.url), new URL('hosting.json', metadata));
 
 await writeFile(

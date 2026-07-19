@@ -115,7 +115,141 @@
   <!-- ============ THE WORKING SCREEN ============
        The cinema becomes an operating system for Aaron's work. The visitor
        is guided by scroll, then can use the dock to jump between modes. -->
-  <section id="mind-os" aria-label="Interactive portfolio: The Studio, Server Room and Engine Room">
+  <section id="mind-os" class="three-worlds" aria-label="Explore Aaron's server room, studio, engine room and stage">
+    <div class="worlds-sticky">
+      <div class="worlds-shell">
+        <header class="worlds-header">
+          <div class="worlds-brand"><span>AJ</span><p><strong>Aaron Jones BEM</strong><small>One mind. Three rooms. Ideas made real.</small></p></div>
+          <p class="worlds-live mono"><i></i> SYSTEM LIVE</p>
+        </header>
+
+        <div class="worlds-viewport">
+          <article class="world-scene world-map is-active" data-world-scene="0" aria-hidden="false">
+            <div class="map-signal signal-a" aria-hidden="true"></div>
+            <div class="map-signal signal-b" aria-hidden="true"></div>
+            <div class="map-intro">
+              <p class="mono">THE FLOOR PLAN OF HOW I THINK</p>
+              <h2>Most people choose a room.<br><em>I built the doors between them.</em></h2>
+              <p>Research without imagination stays in the lab. Creativity without engineering stays on the moodboard. Leadership without delivery stays on the stage. My work is carrying one idea through all three rooms, then bringing everyone with me.</p>
+            </div>
+            <div class="room-map" aria-label="Choose a room">
+              <button class="map-room map-room--server room-object" data-jump-world="1"><span class="mono">01 / CAN IT WORK?</span><strong>Server Room</strong><small>Research · models · code · inference</small><i>ENTER →</i></button>
+              <button class="map-room map-room--studio room-object" data-jump-world="2"><span class="mono">02 / WILL ANYONE CARE?</span><strong>The Studio</strong><small>Story · interaction · experience · culture</small><i>ENTER →</i></button>
+              <button class="map-room map-room--engine room-object" data-jump-world="3"><span class="mono">03 / CAN WE MAKE IT HAPPEN?</span><strong>Engine Room</strong><small>Leadership · teams · delivery · scale</small><i>ENTER →</i></button>
+              <button class="map-stage room-object" data-jump-world="4"><span>THE SIGNAL LEAVES THE BUILDING</span><strong>The Stage</strong><i>↗</i></button>
+            </div>
+          </article>
+
+          <article class="world-scene world-server" data-world-scene="1" aria-hidden="true">
+            <div class="server-haze parallax-layer" data-depth=".35" aria-hidden="true"></div>
+            <div class="rack-wall parallax-layer" data-depth=".7" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <header class="room-intro">
+              <p class="mono">01 / SERVER ROOM / CAN IT WORK?</p>
+              <h2>I enter through the paper.<br><em>I leave through the product.</em></h2>
+              <p>This is where I reproduce the research, challenge its assumptions and make the impossible commercially survivable.</p>
+            </header>
+            <div class="server-console room-object">
+              <div class="console-top mono"><span>aaron@frontier:~</span><i>● LIVE</i></div>
+              <pre><code>&gt; profile pipeline --target realtime
+latency bottleneck ........ found
+gpu requirement ........... 4
+commercial budget ......... 1
+
+&gt; rethink architecture
+frames per second ......... ↑
+memory pressure ........... ↓
+status .................... SHIPPABLE</code></pre>
+            </div>
+            <div class="room-stories server-stories">
+              <button class="story-trigger is-selected" data-story-target="soulx"><b>01</b><span>SoulX</span><small>4 GPUs → 1</small></button>
+              <button class="story-trigger" data-story-target="story-machine"><b>02</b><span>Story Machine</span><small>Direct worlds, not clips</small></button>
+              <button class="story-trigger" data-story-target="vidvoice"><b>03</b><span>VidVoice</span><small>Live dubbing, patented</small></button>
+            </div>
+            <div class="story-deck room-object">
+              <article class="story-card is-selected" data-story-card="soulx"><p class="mono">RESEARCH → COMMERCIAL REALITY</p><h3>The paper wanted four GPUs. The product could afford one.</h3><p>I profiled the SoulX pipeline, found the assumptions that belonged in a lab rather than a product, and rebuilt the inference path to run on a single GPU while improving usable frame rate.</p><div><span>Pipeline profiling</span><span>Memory optimisation</span><span>Real-time inference</span></div></article>
+              <article class="story-card" data-story-card="story-machine"><p class="mono">WORLD MODELS → CREATIVE CONTROL</p><h3>Stop prompting clips. Start directing persistent worlds.</h3><p>Story Machine combines causal diffusion, autoregressive world models, specialised agents and multimodal direction across self-hosted Wan, CausVid and MemFlow infrastructure on GCP and Runpod.</p><div><span>Causal diffusion</span><span>KV cache</span><span>Multi-cloud GPU</span></div></article>
+              <article class="story-card" data-story-card="vidvoice"><p class="mono">RESEARCH → PATENT</p><h3>What if a live video call could speak another language?</h3><p>I helped take real-time lip-synchronised dubbing from a research problem to patented product infrastructure, combining speech, visual translation and live inference without breaking human presence.</p><div><span>Speech-to-speech</span><span>Lip sync</span><span>GB2601162A</span></div></article>
+            </div>
+            <div class="room-question mono">READ → REPRODUCE → REFRAME → BUILD</div>
+          </article>
+
+          <article class="world-scene world-studio" data-world-scene="2" aria-hidden="true">
+            <div class="studio-wash" aria-hidden="true"></div>
+            <div class="studio-collage parallax-layer" data-depth=".5" aria-hidden="true">
+              <figure class="studio-photo photo-a"><img src="assets/camera.jpg" alt=""><figcaption>BUILD THE SET</figcaption></figure>
+              <figure class="studio-photo photo-b"><img src="assets/cinema-still.jpg" alt=""><figcaption>FILL THE SCREEN</figcaption></figure>
+              <figure class="studio-photo photo-c"><img src="assets/aaron-cannes.jpg" alt=""><figcaption>MEET THE AUDIENCE</figcaption></figure>
+            </div>
+            <header class="room-intro">
+              <p class="mono">02 / THE STUDIO / WILL ANYONE CARE?</p>
+              <h2>A demo shows the technology.<br><em>An experience makes it matter.</em></h2>
+              <p>I invent the provocation, direct the interaction, design the world and stay for the difficult bit: making it work in front of real people.</p>
+            </header>
+            <div class="confessional-booth room-object" aria-hidden="true"><span class="mono">MAD//FEST</span><strong>CONFESS<br>YOUR<br>MARKETING<br>SINS</strong><i></i></div>
+            <div class="room-stories studio-stories">
+              <button class="story-trigger is-selected" data-story-target="rory"><b>01</b><span>Rory's Confessional</span><small>Behavioural theatre</small></button>
+              <button class="story-trigger" data-story-target="coach"><b>02</b><span>Interview Coach</span><small>Confidence before consequence</small></button>
+              <button class="story-trigger" data-story-target="speaking-data"><b>03</b><span>Data That Speaks</span><small>Oracle · aviation · banking</small></button>
+            </div>
+            <div class="story-deck room-object">
+              <article class="story-card is-selected" data-story-card="rory"><p class="mono">RORY SUTHERLAND × MAD//FEST</p><h3>We did not explain conversational AI. We built a church and invited people to confess.</h3><p>Rory's digital double listened to marketers' sins and responded in character. I created the concept, experience, visual language and technical delivery. People queued because the technology had become theatre.</p><div><span>Concept</span><span>Character</span><span>Live AI</span></div></article>
+              <article class="story-card" data-story-card="coach"><p class="mono">SDAIA × KSU</p><h3>Practise the interview before it can change your life.</h3><p>A bilingual avatar gave more than 100 students a private space to rehearse difficult interviews and receive structured feedback. Ninety-two percent found it helpful. The breakthrough was psychological safety.</p><div><span>100+ students</span><span>92% helpful</span><span>Arabic + English</span></div></article>
+              <article class="story-card" data-story-card="speaking-data"><p class="mono">ORACLE × ABU DHABI AVIATION</p><h3>Ask a complicated organisation a question. Have the answer look you in the eye.</h3><p>We connected permission-aware enterprise data to live charts, narration and an avatar that explained different answers to different people according to their role, understanding and security clearance.</p><div><span>Data orchestration</span><span>Clearance-aware</span><span>Interactive narration</span></div></article>
+            </div>
+            <div class="room-question mono">PROVOCATION → CHARACTER → INTERACTION → MEMORY</div>
+          </article>
+
+          <article class="world-scene world-engine" data-world-scene="3" aria-hidden="true">
+            <div class="engine-glow" aria-hidden="true"></div>
+            <div class="engine-machinery parallax-layer" data-depth=".45" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b></div>
+            <header class="room-intro">
+              <p class="mono">03 / ENGINE ROOM / CAN WE MAKE IT HAPPEN?</p>
+              <h2>Ideas rarely die from imagination.<br><em>They die in the handoff.</em></h2>
+              <p>I stay with the idea through the team, budget, client, launch, crisis and final mile. This is where possibility becomes momentum.</p>
+            </header>
+            <div class="engine-gauges room-object"><span><i style="--value:82%"></i><b>100K+</b><small>users</small></span><span><i style="--value:68%"></i><b>£1M+</b><small>ARR</small></span><span><i style="--value:91%"></i><b>61</b><small>countries</small></span></div>
+            <div class="room-stories engine-stories">
+              <button class="story-trigger is-selected" data-story-target="yepic"><b>01</b><span>Yepic AI</span><small>Category before consensus</small></button>
+              <button class="story-trigger" data-story-target="bsh"><b>02</b><span>Big Screen Hack</span><small>Movement in 48 hours</small></button>
+              <button class="story-trigger" data-story-target="delivery"><b>03</b><span>Enterprise Delivery</span><small>From boardroom to production</small></button>
+            </div>
+            <div class="story-deck room-object">
+              <article class="story-card is-selected" data-story-card="yepic"><p class="mono">FOUNDER / PRODUCT / COMMERCIAL</p><h3>We built AI video before AI video had a category.</h3><p>I co-founded and exited one of the UK's earliest generative-video companies, helping build the product, team, brand and market to more than 100,000 users and 2,000 paying customers across 61 countries.</p><div><span>Category creation</span><span>Team building</span><span>£1m+ ARR</span></div></article>
+              <article class="story-card" data-story-card="bsh"><p class="mono">LONDON → CANNES → NEW YORK</p><h3>Do not argue with the gatekeepers. Build a bigger screen.</h3><p>I created the format, assembled the partners and brought filmmakers and engineers together. Work made in 48 hours travelled to international festivals and won awards. The event became infrastructure for a new creative community.</p><div><span>750+ participants</span><span>2,972 votes</span><span>~1m impressions</span></div></article>
+              <article class="story-card" data-story-card="delivery"><p class="mono">FORTUNE 500 / GOVERNMENT / REGULATED INDUSTRY</p><h3>I can carry the same idea from a research call to a ministerial room.</h3><p>From Oman’s national-election avatar and banking experiences to Oracle and Abu Dhabi Aviation, I coordinate technical, creative and commercial people until a difficult system works in its real environment.</p><div><span>Government</span><span>Banking</span><span>Aviation</span></div></article>
+            </div>
+            <div class="room-question mono">ALIGN → MOBILISE → SHIP → LEARN → REPEAT</div>
+          </article>
+
+          <article class="world-scene world-stage" data-world-scene="4" aria-hidden="true">
+            <div class="stage-light stage-light--a" aria-hidden="true"></div><div class="stage-light stage-light--b" aria-hidden="true"></div>
+            <div class="stage-photo parallax-layer" data-depth=".25"><img src="assets/aaron-stage.jpg" alt="Aaron Jones speaking on an international stage"></div>
+            <div class="stage-copy room-object">
+              <p class="mono">THE STAGE / CAN EVERYONE ELSE SEE IT?</p>
+              <h2>I make difficult futures feel possible.</h2>
+              <p>I can explain frontier AI to a FTSE 100 executive team, teach a room of coders how to build with it, challenge a technical audience on the research, and tell a story large enough to make people move.</p>
+              <blockquote>“The rare part is not speaking or coding. It is knowing enough about both to change what a room does next.”</blockquote>
+            </div>
+            <div class="stage-ticker mono"><span>LEAP</span><span>DEEPFEST</span><span>GLOBAL AI SUMMIT</span><span>FTSE 100</span><span>ANTHROPIC HACKATHON</span><span>LONDON · CANNES · NEW YORK</span></div>
+            <div class="stage-proof room-object"><span><b>BEM</b>Leadership and impact</span><span><b>50+</b>International stages</span><span><b>100+</b>Organisations taught</span><span><b>3 modes</b>Executive · technical · public</span></div>
+            <button class="return-map mono" data-jump-world="0">← RETURN TO THE FLOOR PLAN</button>
+          </article>
+
+          <div class="world-progress" aria-hidden="true"><span></span></div>
+        </div>
+
+        <nav class="world-nav" aria-label="Move between Aaron's working environments">
+          <button class="world-nav-item is-active" data-world-nav="0"><i>⌂</i><span>Floor plan</span></button>
+          <button class="world-nav-item" data-world-nav="1"><i>01</i><span>Server room</span></button>
+          <button class="world-nav-item" data-world-nav="2"><i>02</i><span>Studio</span></button>
+          <button class="world-nav-item" data-world-nav="3"><i>03</i><span>Engine room</span></button>
+          <button class="world-nav-item" data-world-nav="4"><i>↗</i><span>Stage</span></button>
+        </nav>
+      </div>
+      <p class="worlds-hint mono">SCROLL THROUGH THE BUILDING · CLICK OBJECTS TO OPEN THE WORK</p>
+    </div>
     <div class="mind-os-sticky">
       <div class="os-frame">
         <header class="os-menu">
