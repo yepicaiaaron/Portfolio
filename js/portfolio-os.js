@@ -43,6 +43,8 @@
     const scrollable = journey.offsetHeight - window.innerHeight;
     const value = scrollable > 0 ? Math.max(0, Math.min(1, -rect.top / scrollable)) : 0;
     if (progress) progress.style.transform = 'scaleY(' + value.toFixed(4) + ')';
+    document.body.classList.toggle('journey-reading', rect.top < window.innerHeight && rect.bottom > 0);
+    document.body.classList.toggle('portfolio-reading', rect.top <= window.innerHeight * .15);
     ticking = false;
   }
 
@@ -70,6 +72,26 @@
       const target = document.querySelector(link.getAttribute('href'));
       if (!target) return;
       event.preventDefault();
+      target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+
+  /* Native fragment positioning happens before web fonts, media and GSAP
+     have finished settling the layout. Re-align deep links once the final
+     geometry is known so #speaking never opens over an earlier case study. */
+  function alignHashTarget() {
+    if (!window.location.hash) return;
+    const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
+
+  document.querySelectorAll('.site-nav a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      event.preventDefault();
+      window.history.pushState(null, '', link.getAttribute('href'));
       target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
   });
@@ -123,15 +145,15 @@
       });
 
       if (opening) {
-        timeline.from(opening, { y: 70, autoAlpha: 0, duration: 1.05 }, 0);
+        timeline.from(opening, { y: 70, autoAlpha: 0, duration: 1.05, immediateRender: false }, 0);
       }
 
       if (copy) {
-        timeline.from(copy.children, { y: 42, autoAlpha: 0, duration: .8, stagger: .1 }, 0);
+        timeline.from(copy.children, { y: 42, autoAlpha: 0, duration: .8, stagger: .1, immediateRender: false }, 0);
       }
 
       if (artefact) {
-        timeline.from(artefact, { y: 70, rotate: index % 2 ? 1.5 : -1.5, autoAlpha: 0, duration: 1.1 }, .12);
+        timeline.from(artefact, { y: 70, rotate: index % 2 ? 1.5 : -1.5, autoAlpha: 0, duration: 1.1, immediateRender: false }, .12);
         window.gsap.fromTo(artefact,
           { yPercent: 5 },
           { yPercent: -5, ease: 'none', scrollTrigger: { trigger: moment, start: 'top bottom', end: 'bottom top', scrub: 1.2 } }
@@ -139,7 +161,7 @@
       }
 
       if (sequence) {
-        timeline.from(sequence.children, { y: 50, autoAlpha: 0, duration: .75, stagger: .13 }, .06);
+        timeline.from(sequence.children, { y: 50, autoAlpha: 0, duration: .75, stagger: .13, immediateRender: false }, .06);
       }
     });
 
@@ -153,4 +175,20 @@
 
   setActiveMoment(0);
   updateProgress();
+
+  window.addEventListener('load', function () {
+    window.setTimeout(function () {
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      alignHashTarget();
+    }, 120);
+  });
+  window.addEventListener('hashchange', function () {
+    window.setTimeout(alignHashTarget, 0);
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      alignHashTarget();
+    });
+  }
 })();

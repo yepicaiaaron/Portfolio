@@ -44,6 +44,11 @@ body {
 a { color: var(--ice); text-decoration: none; transition: color 0.25s; }
 a:hover { color: var(--ice2); }
 
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid #eaff45;
+  outline-offset: 4px;
+}
+
 .mono {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.78rem;
@@ -72,21 +77,32 @@ a:hover { color: var(--ice2); }
 .site-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 55;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 22px;
-  mix-blend-mode: difference;
+  min-height: 72px;
+  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(5,8,12,.94), rgba(5,8,12,.82));
+  border-bottom: 1px solid rgba(255,255,255,.13);
+  box-shadow: 0 10px 34px rgba(0,0,0,.16);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
 }
 .site-nav .brand {
   font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
   letter-spacing: 0.18em; color: var(--ink);
 }
-.site-nav .links { display: flex; gap: 22px; margin-right: 110px; }
+.site-nav .links { display: flex; gap: clamp(16px, 2vw, 30px); margin-right: 0; }
 .site-nav .links a {
   font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink);
-  opacity: 0.75;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #f6f8fb;
+  opacity: 0.82;
 }
 .site-nav .links a:hover { opacity: 1; }
-@media (max-width: 720px) { .site-nav .links { display: none; } }
+@media (max-width: 720px) {
+  .site-nav { min-height: 64px; padding: 10px 14px; }
+  .site-nav .links { display: flex; gap: 14px; }
+  .site-nav .links a { display: none; font-size: .62rem; }
+  .site-nav .links a:nth-child(3),
+  .site-nav .links a:last-child { display: inline-block; }
+}
 
 .skip-link {
   position: absolute; left: -9999px; z-index: 100;
@@ -312,6 +328,8 @@ body.screen-locked #screen-lock-bg { opacity: 1; }
   background: radial-gradient(ellipse 80% 75% at 50% 45%, transparent 65%, rgba(2, 5, 10, 0.16) 100%);
 }
 body.screen-locked #screen-bezel { opacity: 1; }
+body.portfolio-reading #screen-bezel,
+body.portfolio-reading #screen-lock-bg { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   #screen-lock-bg, #screen-bezel { transition: none; }
 }
@@ -329,9 +347,9 @@ body.screen-locked #screen-bezel { opacity: 1; }
 }
 body.branded .brand-mini { opacity: 1; transform: none; pointer-events: auto; }
 .bm-name { font-family: 'Anton', 'Impact', sans-serif; font-size: 1.05rem;
-  text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); }
+  text-transform: uppercase; letter-spacing: 0.04em; color: #f6f8fb; }
 .bm-hand { font-family: 'Homemade Apple', cursive; font-size: 0.85rem;
-  color: var(--ice2); transform: rotate(-3deg); margin-top: 2px; }
+  color: #8fd8ff; transform: rotate(-3deg); margin-top: 2px; }
 .roll { display: inline-block; overflow: hidden; font-family: 'JetBrains Mono', monospace;
   font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
 .roll span { display: inline-block; position: relative; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
@@ -2689,6 +2707,18 @@ footer .mono { font-size: 0.7rem; }
   background: #090a0c;
   isolation: isolate;
 }
+/* Reset the fixed-height Cinema OS rule used by the discarded V3/V4
+   interface. Without this higher-specificity reset, the 20,000px authored
+   journey overflows a 720vh parent: sticky navigation ends early, fragment
+   links land on the wrong case study and later chapters collide visually. */
+#mind-os.journey-v5 {
+  height: auto;
+  min-height: 0;
+  z-index: 4;
+  padding: 0;
+  color: #f6f4ee;
+  background: #090a0c;
+}
 .journey-v5[data-active-room="server"] { --journey-accent: #9cff57; }
 .journey-v5[data-active-room="studio"] { --journey-accent: #ee5744; }
 .journey-v5[data-active-room="engine"] { --journey-accent: #ffcf37; }
@@ -2697,6 +2727,7 @@ footer .mono { font-size: 0.7rem; }
 .journey-rail {
   position: sticky;
   top: 0;
+  align-self: start;
   z-index: 20;
   height: 100vh;
   display: flex;
@@ -2724,22 +2755,29 @@ footer .mono { font-size: 0.7rem; }
 .journey-line { position: relative; flex: 1; width: 1px; margin: 22px 0; background: rgba(255,255,255,.16); overflow: hidden; }
 .journey-line i { position: absolute; inset: 0; transform: scaleY(0); transform-origin: top; background: var(--journey-accent); box-shadow: 0 0 16px var(--journey-accent); }
 .journey-rail nav { display: flex; flex-direction: column; gap: 7px; width: 100%; }
-.journey-rail nav a { position: relative; display: flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 6px; color: rgba(255,255,255,.42); text-decoration: none; transition: color .25s ease, background .25s ease; }
+.journey-rail nav a { position: relative; display: flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 6px; color: rgba(255,255,255,.68); text-decoration: none; transition: color .25s ease, background .25s ease; }
 .journey-rail nav a::before { content: ''; position: absolute; left: -14px; width: 3px; height: 0; background: var(--journey-accent); transition: height .25s ease; }
-.journey-rail nav a b { font: 600 .55rem/1 'JetBrains Mono', monospace; }
-.journey-rail nav a span { font: 500 .48rem/1.2 'JetBrains Mono', monospace; letter-spacing: .04em; text-transform: uppercase; }
+.journey-rail nav a b { font: 600 .64rem/1 'JetBrains Mono', monospace; }
+.journey-rail nav a span { font: 500 .62rem/1.2 'JetBrains Mono', monospace; letter-spacing: .035em; text-transform: uppercase; }
 .journey-rail nav a:hover, .journey-rail nav a.is-active { color: #fff; background: rgba(255,255,255,.06); }
 .journey-rail nav a.is-active::before { height: 70%; }
-.journey-counter { margin-top: 20px; color: rgba(255,255,255,.48); font-size: .55rem; }
+.journey-counter { margin-top: 20px; color: rgba(255,255,255,.7); font-size: .64rem; }
 .journey-counter b { color: var(--journey-accent); }
 .journey-flow { min-width: 0; }
+
+.story-moment,
+.portfolio-section,
+#about,
+#contact {
+  scroll-margin-top: 84px;
+}
 
 .story-moment {
   position: relative;
   min-height: 112vh;
   display: grid;
   align-items: center;
-  overflow: clip;
+  overflow: visible;
 }
 
 .moment-inner {
@@ -2753,7 +2791,7 @@ footer .mono { font-size: 0.7rem; }
 .moment-grid { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(320px, .82fr); align-items: center; gap: clamp(55px, 8vw, 150px); }
 .moment-grid--reverse { grid-template-columns: minmax(320px, .82fr) minmax(0, 1.02fr); }
 .moment-grid--reverse .moment-copy { order: -1; }
-.moment-kicker, .room-number { margin-bottom: 24px; font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; opacity: .68; }
+.moment-kicker, .room-number { margin-bottom: 24px; font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; opacity: .8; }
 .moment-lede { max-width: 760px; margin: 30px auto 0; font-size: clamp(1.05rem, 1.4vw, 1.35rem); line-height: 1.65; color: rgba(255,255,255,.7); }
 .moment-copy { max-width: 640px; }
 .moment-copy h3 { margin: 0 0 28px; font: 500 clamp(2.6rem, 5.2vw, 6.2rem)/.96 'Playfair Display', serif; letter-spacing: -.045em; }
@@ -2890,7 +2928,7 @@ footer .mono { font-size: 0.7rem; }
 .talk-moment { min-height:145vh; background:#f3efe7; color:#171318; }
 .talk-list { margin-top:8vh; border-top:1px solid #171318; }
 .talk-list article { min-height:180px; display:grid; grid-template-columns:70px minmax(260px,.8fr) 1fr; align-items:center; gap:34px; border-bottom:1px solid #171318; }
-.talk-list article>span{font:600 .65rem 'JetBrains Mono',monospace}.talk-list h3{font:500 clamp(1.8rem,3vw,3.6rem)/1.05 'Playfair Display',serif}.talk-list p{max-width:440px;line-height:1.55;opacity:.62}
+.talk-list article>span{font:600 .65rem 'JetBrains Mono',monospace}.talk-list h3{font:500 clamp(1.8rem,3vw,3.6rem)/1.05 'Playfair Display',serif}.talk-list p{max-width:440px;line-height:1.55;opacity:.76}
 .stage-credentials { display:flex; flex-wrap:wrap; gap:10px; margin:60px 0; }.stage-credentials span{padding:9px 12px;border:1px solid rgba(0,0,0,.35);font-size:.58rem}
 .stage-booking { display:flex; align-items:center; justify-content:space-between; padding:28px 0; border-top:2px solid #171318; border-bottom:2px solid #171318; color:#171318; font:400 clamp(2.4rem,5vw,6rem)/1 'Anton',sans-serif; text-decoration:none; text-transform:uppercase; }.stage-booking span{color:#ff286f}
 
@@ -2932,7 +2970,8 @@ footer .mono { font-size: 0.7rem; }
   .journey-rail { position:fixed; top:auto; left:0; right:0; bottom:0; z-index:60; width:100%; height:62px; flex-direction:row; justify-content:space-between; padding:7px 9px; border-top:1px solid rgba(255,255,255,.18); border-right:0; }
   .journey-mark,.journey-line,.journey-counter { display:none; }
   .journey-rail nav { width:100%; flex-direction:row; justify-content:space-around; gap:2px; }
-  .journey-rail nav a { width:20%; min-height:46px; flex-direction:column; gap:4px; padding:4px; }.journey-rail nav a span{display:block;font-size:.38rem}.journey-rail nav a::before{left:50%;top:-7px;width:0;height:3px}.journey-rail nav a.is-active::before{width:70%;height:3px;transform:translateX(-50%)}
+  .journey-rail nav a { width:20%; min-height:46px; flex-direction:column; gap:4px; padding:4px; }.journey-rail nav a span{display:block;font-size:.62rem}.journey-rail nav a::before{left:50%;top:-7px;width:0;height:3px}.journey-rail nav a.is-active::before{width:70%;height:3px;transform:translateX(-50%)}
+  body:not(.journey-reading) .journey-rail { visibility:hidden; transform:translateY(110%); }
   .story-moment { min-height:auto; padding:10vh 0; }
   .threshold-moment,.room-opening,.stage-opening { min-height:100svh; }
   .moment-inner { padding:90px 22px; }
