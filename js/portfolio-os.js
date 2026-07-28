@@ -8,9 +8,15 @@
   const roomLinks = Array.from(journey.querySelectorAll('[data-room-link]'));
   const progress = journey.querySelector('.journey-line i');
   const counter = journey.querySelector('.journey-counter b');
+  const corridor = journey.querySelector('.corridor-moment');
+  const corridorTrack = journey.querySelector('[data-corridor-track]');
+  const practiceDoors = Array.from(journey.querySelectorAll('[data-practice-door]'));
+  const corridorLabel = journey.querySelector('[data-corridor-label]');
+  const corridorProgress = journey.querySelector('[data-corridor-progress]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGSAP = Boolean(window.gsap && window.ScrollTrigger);
   let currentMoment = -1;
+  let currentDoor = -1;
   let ticking = false;
 
   document.documentElement.classList.add('journey-ready');
@@ -43,9 +49,47 @@
     const scrollable = journey.offsetHeight - window.innerHeight;
     const value = scrollable > 0 ? Math.max(0, Math.min(1, -rect.top / scrollable)) : 0;
     if (progress) progress.style.transform = 'scaleY(' + value.toFixed(4) + ')';
+    updateCorridor();
     document.body.classList.toggle('journey-reading', rect.top < window.innerHeight && rect.bottom > 0);
     document.body.classList.toggle('portfolio-reading', rect.top <= window.innerHeight * .15);
     ticking = false;
+  }
+
+  function updateCorridor() {
+    if (!corridor || !corridorTrack || !practiceDoors.length) return;
+
+    const compact = window.matchMedia('(max-width: 700px)').matches;
+    if (compact || reducedMotion) {
+      corridorTrack.style.transform = '';
+      practiceDoors.forEach((door) => door.classList.add('is-active'));
+      return;
+    }
+
+    const rect = corridor.getBoundingClientRect();
+    const scrollable = Math.max(1, corridor.offsetHeight - window.innerHeight);
+    const value = Math.max(0, Math.min(1, -rect.top / scrollable));
+    const scaled = value * (practiceDoors.length - 1);
+    const from = Math.floor(scaled);
+    const to = Math.min(practiceDoors.length - 1, from + 1);
+    const mix = scaled - from;
+    const fromCentre = practiceDoors[from].offsetLeft + practiceDoors[from].offsetWidth / 2;
+    const toCentre = practiceDoors[to].offsetLeft + practiceDoors[to].offsetWidth / 2;
+    const activeCentre = fromCentre + (toCentre - fromCentre) * mix;
+    const x = corridor.clientWidth / 2 - activeCentre;
+    const active = Math.max(0, Math.min(practiceDoors.length - 1, Math.round(scaled)));
+
+    corridorTrack.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    corridor.style.setProperty('--corridor-progress', value.toFixed(4));
+    if (corridorProgress) corridorProgress.style.transform = 'scaleX(' + value.toFixed(4) + ')';
+
+    if (active !== currentDoor) {
+      currentDoor = active;
+      practiceDoors.forEach((door, index) => door.classList.toggle('is-active', index === active));
+      if (corridorLabel) {
+        const label = practiceDoors[active].querySelector('.door-copy small');
+        corridorLabel.textContent = String(active + 1).padStart(2, '0') + ' / ' + (label ? label.textContent : 'CHOOSE A DOOR');
+      }
+    }
   }
 
   window.addEventListener('scroll', function () {
@@ -179,8 +223,12 @@
   window.addEventListener('load', function () {
     window.setTimeout(function () {
       if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      updateCorridor();
       alignHashTarget();
     }, 120);
+  });
+  window.addEventListener('resize', function () {
+    window.requestAnimationFrame(updateCorridor);
   });
   window.addEventListener('hashchange', function () {
     window.setTimeout(alignHashTarget, 0);
