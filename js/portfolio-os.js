@@ -18,6 +18,7 @@
   let currentMoment = -1;
   let currentDoor = -1;
   let ticking = false;
+  let corridorXTo = null;
 
   document.documentElement.classList.add('journey-ready');
   journey.dataset.activeRoom = 'threshold';
@@ -78,7 +79,8 @@
     const x = corridor.clientWidth / 2 - activeCentre;
     const active = Math.max(0, Math.min(practiceDoors.length - 1, Math.round(scaled)));
 
-    corridorTrack.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    if (corridorXTo) corridorXTo(x);
+    else corridorTrack.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
     corridor.style.setProperty('--corridor-progress', value.toFixed(4));
     if (corridorProgress) corridorProgress.style.transform = 'scaleX(' + value.toFixed(4) + ')';
 
@@ -172,6 +174,13 @@
 
   if (hasGSAP && !reducedMotion) {
     window.gsap.registerPlugin(window.ScrollTrigger);
+    if (corridorTrack) {
+      corridorXTo = window.gsap.quickTo(corridorTrack, 'x', {
+        duration: .62,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      });
+    }
 
     moments.forEach(function (moment, index) {
       const copy = moment.querySelector('.moment-copy');
@@ -185,7 +194,7 @@
           start: 'top 72%',
           toggleActions: 'play none none reverse'
         },
-        defaults: { ease: 'power3.out' }
+        defaults: { ease: 'power3.out', overwrite: 'auto' }
       });
 
       if (opening) {

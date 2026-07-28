@@ -28,7 +28,7 @@
     hubRAF = 0;
     const dt = Math.min(0.05, (now - hubLastT) / 1000 || 0.016);
     hubLastT = now;
-    ySmooth += (yTarget - ySmooth) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 10));
+    ySmooth += (yTarget - ySmooth) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 7));
     if (Math.abs(yTarget - ySmooth) < 0.3) ySmooth = yTarget;
     for (let i = 0; i < scrollSubs.length; i++) scrollSubs[i](ySmooth);
     if (ySmooth !== yTarget) hubRAF = requestAnimationFrame(hubTick);
@@ -256,91 +256,56 @@
     }
   }
 
-  /* ---------- Three-act hero: portrait -> cinema montage -> pan to screen
-     -> lock.
-
-     All three act layers are STACKED in #hero-media and loaded once up
-     front - acts switch by toggling opacity (.is-active), never by
-     swapping src, so no cut ever waits on a network fetch or decoder
-     restart. Whichever layer is active is published on
-     window.__heroActiveLayer so the digit mosaic samples the right one.
-
-     Act 3 is a keyframe-dense MP4 scrubbed by scroll position. The source
-     was rebuilt from the original 193-frame camera move, but ships as one
-     reliable request. Stop scrolling and the pan stops; reverse direction
-     and it travels back towards Aaron.
-
-     "screen-locked" flips on when the scrub band completes (prog >= 1),
-     comfortably before hero physically scrolls away - the backdrop sits
-     behind hero (z-index 0 vs 1) so this early flip is invisible until
-     hero vacates the space, at which point it's already there. ---------- */
-  const heroVid = document.getElementById('hero-video');
-  const heroVid2 = document.getElementById('hero-video-2');
+  /* ---------- Audience -> screen ----------
+     The audience film cross-dissolves into an optically interpolated,
+     keyframe-dense camera move. The pan is scrubbed across a generous
+     scroll band, then its final frame holds before the trailer begins. */
+  const audienceVid = document.getElementById('hero-video-2');
   const panVid = document.getElementById('hero-pan-video');
   const heroEl = document.getElementById('hero');
-  if (heroVid && heroEl) {
+  if (audienceVid && panVid && heroEl) {
     const sticky = document.querySelector('.hero-sticky');
-    const layers = [heroVid, heroVid2, panVid].filter(Boolean);
-    let act = 1;
     let pendingPanProgress = 0;
     let lastPanTime = -1;
 
     function scrubPan(t) {
-      if (!panVid) return;
       pendingPanProgress = Math.max(0, Math.min(1, t));
       if (!Number.isFinite(panVid.duration) || panVid.duration <= 0 || panVid.readyState < 1) return;
-      const target = pendingPanProgress * Math.max(0, panVid.duration - 0.035);
-      if (Math.abs(target - lastPanTime) < 0.018) return;
+      const target = pendingPanProgress * Math.max(0, panVid.duration - 0.025);
+      if (Math.abs(target - lastPanTime) < 0.012) return;
       lastPanTime = target;
       try { panVid.currentTime = target; } catch (_) {}
     }
-    if (panVid) {
-      panVid.pause();
-      panVid.load();
-      panVid.addEventListener('loadedmetadata', () => scrubPan(pendingPanProgress), { once: true });
+    panVid.pause();
+    panVid.load();
+    panVid.addEventListener('loadedmetadata', () => scrubPan(pendingPanProgress), { once: true });
+    audienceVid.play().catch(() => {});
+    window.__heroActiveLayer = audienceVid;
+
+    const DISSOLVE_START = 0.44;
+    const DISSOLVE_END = 0.56;
+    const PAN_START = 0.50;
+    const PAN_END = 0.91;
+
+    function smooth(a, b, value) {
+      const t = Math.max(0, Math.min(1, (value - a) / Math.max(.001, b - a)));
+      return t * t * (3 - 2 * t);
     }
 
-    function setAct(n) {
-      act = n;
-      if (sticky) sticky.classList.remove('act2', 'act3');
-      if (n === 2) sticky && sticky.classList.add('act2');
-      if (n === 3) sticky && sticky.classList.add('act3');
-      const active = n === 1 ? heroVid : n === 2 ? heroVid2 : panVid;
-      layers.forEach((el) => el.classList.toggle('is-active', el === active));
-      window.__heroActiveLayer = active;
-      // Play/pause without ever touching src. Act-2 video is not looped:
-      // room.mp4 ends on ~the same shot the act-3 frame sequence opens on,
-      // so it plays once and holds there - the act2->act3 cut lands on a
-      // matching frame no matter how long the user dwells.
-      if (heroVid) { if (n === 1) heroVid.play().catch(() => {}); else heroVid.pause(); }
-      if (heroVid2) {
-        if (n === 2 && !heroVid2.ended) heroVid2.play().catch(() => {});
-        else heroVid2.pause();
-      }
-    }
-    window.__heroActiveLayer = heroVid;
-
-    // Act bands (fractions of the hero's scroll budget):
-    //   act1 0 -> 0.5, act2 0.5 -> 0.74 (bridging beats live here),
-    //   act3 scrub 0.74 -> 1.0 - the "film" plays across that whole band.
-    // Driven by the smoothed scroll hub, so the film frames (and the act
-    // switches) glide through every intermediate position instead of
-    // jumping a wheel-notch at a time. The hub calls back every frame
-    // while the eased value settles - the scrub needs no easing of its
-    // own, drawPanFrame is called directly with the smoothed position.
-    const SCRUB_START = 0.74;
     onSmoothScroll((y) => {
       const total = heroEl.offsetHeight - window.innerHeight;
-      const prog = total > 0 ? y / total : 0;
-      // every swap happens while digits still veil the video, so cuts are invisible
-      if (act === 1 && prog > 0.5) setAct(2);
-      else if (act === 2 && prog < 0.42) setAct(1);
-      else if (act === 2 && prog > SCRUB_START) setAct(3);
-      else if (act === 3 && prog < SCRUB_START - 0.04) setAct(2);
-      if (act === 3) {
-        scrubPan((Math.min(1, Math.max(0, prog)) - SCRUB_START) / (1 - SCRUB_START));
-      }
-      document.body.classList.toggle('screen-locked', act === 3 && prog >= 1);
+      const prog = total > 0 ? Math.max(0, Math.min(1, y / total)) : 0;
+      const dissolve = smooth(DISSOLVE_START, DISSOLVE_END, prog);
+      audienceVid.style.opacity = (1 - dissolve).toFixed(4);
+      panVid.style.opacity = dissolve.toFixed(4);
+      sticky && sticky.classList.toggle('act3', dissolve > .5);
+      window.__heroActiveLayer = dissolve < .5 ? audienceVid : panVid;
+
+      scrubPan((prog - PAN_START) / (PAN_END - PAN_START));
+      if (dissolve > .995) audienceVid.pause();
+      else if (audienceVid.paused) audienceVid.play().catch(() => {});
+
+      document.body.classList.toggle('screen-locked', prog >= .94);
     });
   }
 
@@ -365,20 +330,22 @@
       // raw scroll - same easing treatment as everything else.
       const total = cinemaEl.offsetHeight - window.innerHeight;
       const prog = total > 0 ? Math.max(0, Math.min(1, (y - cinemaEl.offsetTop) / total)) : 0;
+      const trailerStart = .065;
+      const trailerProgress = Math.max(0, Math.min(1, (prog - trailerStart) / (1 - trailerStart)));
       const n = beats.length;
       beats.forEach((el, i) => {
         const start = i / n, end = (i + 1) / n;
-        const fadeIn = i === 0 ? 1 : smooth(start, start + 0.055, prog);
-        const fadeOut = i === n - 1 ? 1 : 1 - smooth(end - 0.055, end, prog);
+        const fadeIn = smooth(start, start + 0.055, trailerProgress);
+        const fadeOut = i === n - 1 ? 1 : 1 - smooth(end - 0.055, end, trailerProgress);
         const o = Math.min(fadeIn, fadeOut);
-        const local = Math.max(0, Math.min(1, (prog - start) / Math.max(.001, end - start)));
+        const local = Math.max(0, Math.min(1, (trailerProgress - start) / Math.max(.001, end - start)));
         el.style.opacity = o.toFixed(3);
         el.style.transform = 'translateY(' + ((1 - fadeIn) * 18) + 'px)';
         el.style.setProperty('--trailer-scale', (1.09 - local * .065).toFixed(4));
         el.classList.toggle('is-active', o > 0.5);
       });
       if (stage) {
-        stage.style.setProperty('--leader-white', (1 - smooth(0, .045, prog)).toFixed(3));
+        stage.style.setProperty('--stage-black', smooth(0, .055, prog).toFixed(3));
       }
       if (counter) {
         const seconds = Math.floor(prog * 18);

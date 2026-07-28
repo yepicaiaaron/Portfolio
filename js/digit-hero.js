@@ -9,7 +9,7 @@
   const hero = document.getElementById('hero');
   const canvas = document.getElementById('digit-canvas');
   const media = document.getElementById('hero-media');
-  const video = document.getElementById('hero-video');
+  const video = document.getElementById('hero-video-2');
   const image = document.getElementById('hero-image');
   const glow = document.getElementById('hero-glow');
   const copy = document.querySelector('.hero-copy');
@@ -259,8 +259,9 @@
     readScroll();
     const dtF = Math.min(0.05, (now - lastFrameT) / 1000 || 0.016);
     lastFrameT = now;
-    // ease the playhead toward the real scroll position (~150ms half-life)
-    pRawS += (pRaw - pRawS) * (reduceMotion ? 1 : 1 - Math.exp(-dtF * 10));
+    // ease the playhead toward the real scroll position so wheel notches
+    // become a continuous camera move rather than visible jumps
+    pRawS += (pRaw - pRawS) * (reduceMotion ? 1 : 1 - Math.exp(-dtF * 7));
     if (Math.abs(pRaw - pRawS) < 0.0003) pRawS = pRaw;
     const pS = Math.min(1, pRawS);
     const pp = reduceMotion ? 1 : pS;
@@ -310,9 +311,7 @@
       // quantise means the filter string only changes ~6 times across
       // the whole dissolve instead of every frame.
       const blur = Math.round(6 * (1 - videoReveal));
-      const baseScale = 1.08 - 0.08 * videoReveal;
-      const panZoom = ss(0.80, 1.0, pp);
-      const scale = baseScale + panZoom * 0.20;
+      const scale = 1.05 - 0.05 * videoReveal;
       const f = blur > 0 ? 'blur(' + blur + 'px)' : 'none';
       if (media.style.filter !== f) media.style.filter = f;
       media.style.transform = 'translateX(' + (faceShift * 100).toFixed(2) + 'vw) scale(' + scale.toFixed(3) + ')';
@@ -332,7 +331,7 @@
     if (glow) glow.style.opacity = (videoReveal * 0.85).toFixed(2);
     if (copy) {
       copy.style.transform = 'translateY(' + (-videoReveal * 55) + 'vh)';
-      copy.style.opacity = (1 - ss(0.34, 0.58, pp)).toFixed(3);
+      copy.style.opacity = (1 - ss(0.16, 0.26, pp)).toFixed(3);
     }
     if (brandMini) {
       const bo = ss(0.42, 0.64, pp);
@@ -341,19 +340,16 @@
       brandMini.style.transform = 'translateY(' + ((1 - bo) * -10) + 'px)';
     }
 
-    // ---- act-two sequence: two title beats over the (undimmed) video,
-    // purely additive from pp. Room.mp4 and the pan video are graded to
-    // match and room.mp4 holds on its matching final frame (see
-    // effects.js), so the video itself carries the whole act2->act3
-    // handoff with no dark beat needed to hide the cut.
+    // Two brief title beats play over the audience before the camera turns
+    // towards the screen. The text is gone before the cross-dissolve.
     if (heroDark) heroDark.style.opacity = '0';
     if (bridging1) {
-      const b1 = pulse(0.52, 0.55, 0.60, 0.63, pp);
+      const b1 = pulse(0.27, 0.30, 0.35, 0.38, pp);
       bridging1.style.opacity = b1.toFixed(3);
       bridging1.style.transform = 'translateY(' + ((1 - b1) * 24) + 'px)';
     }
     if (bridging2) {
-      const b2 = pulse(0.65, 0.68, 0.70, 0.73, pp);
+      const b2 = pulse(0.38, 0.41, 0.46, 0.49, pp);
       bridging2.style.opacity = b2.toFixed(3);
       bridging2.style.transform = 'translateY(' + ((1 - b2) * 24) + 'px)';
     }
@@ -424,4 +420,3 @@
   layoutCells();
   requestAnimationFrame(frame);
 })();
-

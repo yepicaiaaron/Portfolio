@@ -111,7 +111,7 @@ a:hover { color: var(--ice2); }
 /* z-index above the fixed screen-lock backdrop (z-index:0), so hero's own
    acts always paint over it whenever any part of hero is in view - the
    backdrop only shows once hero has fully scrolled out (see effects.js). */
-#hero { position: relative; height: 420vh; z-index: 1; } /* trimmed from 540vh - same beats (all fraction-based), ~30% less scroll travel */
+#hero { position: relative; height: 500vh; z-index: 1; }
 
 .hero-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
@@ -132,7 +132,6 @@ a:hover { color: var(--ice2); }
    swaps, so act cuts never wait on a fetch/decode. */
 .act-layer {
   position: absolute; inset: 0; opacity: 0;
-  transition: opacity 480ms cubic-bezier(.22,.65,.2,1);
   will-change: opacity;
 }
 .act-layer.is-active { opacity: 1; }
@@ -272,7 +271,7 @@ a:hover { color: var(--ice2); }
 
 #screen-lock-bg {
   position: fixed; inset: 0; z-index: 0; overflow: hidden;
-  opacity: 0; transition: opacity 2.2s ease;
+  opacity: 0; transition: opacity .28s linear;
 }
 #screen-lock-bg img {
   width: 100%; height: 100%; object-fit: cover;
@@ -284,7 +283,7 @@ body.screen-locked #screen-lock-bg { opacity: 1; }
 
 #screen-bezel {
   position: fixed; inset: 0; z-index: 40; pointer-events: none;
-  opacity: 0; transition: opacity 2.2s ease;
+  opacity: 0; transition: opacity .28s linear;
 }
 #screen-bezel::before {
   content: ''; position: absolute; inset: 14px; border-radius: 14px;
@@ -332,8 +331,8 @@ body.branded .brand-mini { opacity: 1; transform: none; pointer-events: auto; }
 /* ---------- Opening trailer: plays ON the locked screen ---------- */
 #cinema {
   position: relative;
-  height: 430vh;
-  background: #020303;
+  height: 500vh;
+  background: transparent;
   isolation: isolate;
 }
 .screen-stage {
@@ -341,16 +340,10 @@ body.branded .brand-mini { opacity: 1; transform: none; pointer-events: auto; }
   display: flex; align-items: center; justify-content: center;
   z-index: 10; /* above the backdrop (0), below the bezel vignette (40) */
   padding: 0; text-align: left;
-  background: #020303;
+  background: rgba(2,3,3,var(--stage-black,0));
 }
 .screen-stage::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 12;
-  pointer-events: none;
-  background: #f2f1ed;
-  opacity: var(--leader-white, 1);
+  display: none;
 }
 .screen-stage::after {
   content: '';
@@ -515,7 +508,7 @@ body.branded .brand-mini { opacity: 1; transform: none; pointer-events: auto; }
 .trailer-enter span { font-size: 1.1rem; color: var(--ice2); }
 
 @media (max-width: 720px) {
-  #cinema { height: 390vh; }
+  #cinema { height: 430vh; }
   .screen-beat { padding: 11vh 24px; }
   .trailer-media img { object-position: 62% 50%; }
   .trailer-media::after { background: linear-gradient(0deg, rgba(0,0,0,.9), rgba(0,0,0,.18) 72%, rgba(0,0,0,.45)); }
