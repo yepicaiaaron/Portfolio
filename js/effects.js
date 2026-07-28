@@ -256,7 +256,7 @@
     }
   }
 
-  /* ---------- Three-act hero: phone -> walk-in room -> pan to the screen
+  /* ---------- Three-act hero: portrait -> cinema montage -> pan to screen
      -> lock.
 
      All three act layers are STACKED in #hero-media and loaded once up
@@ -265,13 +265,10 @@
      restart. Whichever layer is active is published on
      window.__heroActiveLayer so the digit mosaic samples the right one.
 
-     Act 3 is not a video at all: it's a <canvas> scrubbed through JPEG
-     frames by scroll position (Apple product-page style). The "film"
-     advances exactly as far as the user scrolls - stop scrolling and it
-     stops, scroll back and it plays in reverse. That also deletes the
-     whole class of "video didn't play / ended didn't fire / cut from a
-     random loop point" timing bugs: every pixel of act 3 is a pure
-     function of scroll position.
+     Act 3 is a keyframe-dense MP4 scrubbed by scroll position. The source
+     was rebuilt from the original 193-frame camera move, but ships as one
+     reliable request. Stop scrolling and the pan stops; reverse direction
+     and it travels back towards Aaron.
 
      "screen-locked" flips on when the scrub band completes (prog >= 1),
      comfortably before hero physically scrolls away - the backdrop sits
@@ -279,110 +276,28 @@
      hero vacates the space, at which point it's already there. ---------- */
   const heroVid = document.getElementById('hero-video');
   const heroVid2 = document.getElementById('hero-video-2');
-  const panCanvas = document.getElementById('pan-canvas');
+  const panVid = document.getElementById('hero-pan-video');
   const heroEl = document.getElementById('hero');
   if (heroVid && heroEl) {
     const sticky = document.querySelector('.hero-sticky');
-    const layers = [heroVid, heroVid2, panCanvas].filter(Boolean);
+    const layers = [heroVid, heroVid2, panVid].filter(Boolean);
     let act = 1;
+    let pendingPanProgress = 0;
+    let lastPanTime = -1;
 
-    // --- Act-3 frame sequence: progressive preload + scroll scrub ---
-    const FRAME_URLS = window.PAN_FRAMES || [];
-    const frames = new Array(FRAME_URLS.length).fill(null);
-    let framesRequested = false;
-    let framesAvailable = null;
-    let frameProbeRequested = false;
-    let panCtx = null;
-    let lastDrawn = -1;
-
-    function loadFrame(i) {
-      if (frames[i] || !FRAME_URLS[i]) return;
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => { frames[i] = img; };
-      img.src = FRAME_URLS[i];
-      frames[i] = img; // mark requested; .complete distinguishes loaded
+    function scrubPan(t) {
+      if (!panVid) return;
+      pendingPanProgress = Math.max(0, Math.min(1, t));
+      if (!Number.isFinite(panVid.duration) || panVid.duration <= 0 || panVid.readyState < 1) return;
+      const target = pendingPanProgress * Math.max(0, panVid.duration - 0.035);
+      if (Math.abs(target - lastPanTime) < 0.018) return;
+      lastPanTime = target;
+      try { panVid.currentTime = target; } catch (_) {}
     }
-
-    // Two passes: every 6th frame first so scrubbing works almost
-    // immediately (nearest-loaded fallback fills the gaps), then the rest.
-    function preloadFrames() {
-      if (framesRequested || !FRAME_URLS.length) return;
-      if (framesAvailable === false) return;
-      if (framesAvailable === null) {
-        if (frameProbeRequested) return;
-        frameProbeRequested = true;
-        const probe = new Image();
-        probe.onload = () => {
-          framesAvailable = true;
-          frameProbeRequested = false;
-          preloadFrames();
-        };
-        probe.onerror = () => {
-          framesAvailable = false;
-          frameProbeRequested = false;
-        };
-        probe.src = FRAME_URLS[0];
-        return;
-      }
-      framesRequested = true;
-      for (let i = 0; i < FRAME_URLS.length; i += 6) loadFrame(i);
-      setTimeout(() => { for (let i = 0; i < FRAME_URLS.length; i++) loadFrame(i); }, 800);
-    }
-    // Kick off in idle time shortly after load - 3MB of JPEGs, fetched
-    // while the user is still reading the top of the hero.
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(preloadFrames, { timeout: 4000 });
-    } else {
-      setTimeout(preloadFrames, 2500);
-    }
-
-    function sizePanCanvas() {
-      if (!panCanvas) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      panCanvas.width = window.innerWidth * dpr;
-      panCanvas.height = window.innerHeight * dpr;
-      panCtx = panCanvas.getContext('2d');
-      panCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      lastDrawn = -1;
-    }
-    if (panCanvas) { sizePanCanvas(); window.addEventListener('resize', sizePanCanvas); }
-
-    function nearestLoaded(i) {
-      for (let d = 0; d < frames.length; d++) {
-        if (frames[i + d] && frames[i + d].complete && frames[i + d].naturalWidth) return i + d;
-        if (frames[i - d] && frames[i - d].complete && frames[i - d].naturalWidth) return i - d;
-      }
-      return -1;
-    }
-
-    function drawPanFrame(t) { // t: 0..1 through the scrub band
-      if (!panCtx || !FRAME_URLS.length) return;
-      const want = Math.max(0, Math.min(FRAME_URLS.length - 1, Math.round(t * (FRAME_URLS.length - 1))));
-      const idx = nearestLoaded(want);
-      if (idx < 0) {
-        // No frame decoded yet (user outran the idle preload): paint the
-        // act-2 video's held final frame - visually ~identical to scrub
-        // frame 0 - so the canvas is never transparent.
-        if (heroVid2 && heroVid2.readyState >= 2 && lastDrawn === -1) {
-          const vw = window.innerWidth, vh = window.innerHeight;
-          const iw = heroVid2.videoWidth, ih = heroVid2.videoHeight;
-          if (iw && ih) {
-            const s = Math.max(vw / iw, vh / ih);
-            panCtx.drawImage(heroVid2, (vw - iw * s) / 2, (vh - ih * s) / 2, iw * s, ih * s);
-          }
-        }
-        return;
-      }
-      if (idx === lastDrawn) return;
-      const img = frames[idx];
-      // cover-fit
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const iw = img.naturalWidth, ih = img.naturalHeight;
-      const s = Math.max(vw / iw, vh / ih);
-      const dw = iw * s, dh = ih * s;
-      panCtx.drawImage(img, (vw - dw) / 2, (vh - dh) / 2, dw, dh);
-      lastDrawn = idx;
+    if (panVid) {
+      panVid.pause();
+      panVid.load();
+      panVid.addEventListener('loadedmetadata', () => scrubPan(pendingPanProgress), { once: true });
     }
 
     function setAct(n) {
@@ -390,7 +305,7 @@
       if (sticky) sticky.classList.remove('act2', 'act3');
       if (n === 2) sticky && sticky.classList.add('act2');
       if (n === 3) sticky && sticky.classList.add('act3');
-      const active = n === 1 ? heroVid : n === 2 ? heroVid2 : panCanvas;
+      const active = n === 1 ? heroVid : n === 2 ? heroVid2 : panVid;
       layers.forEach((el) => el.classList.toggle('is-active', el === active));
       window.__heroActiveLayer = active;
       // Play/pause without ever touching src. Act-2 video is not looped:
@@ -420,27 +335,24 @@
       // every swap happens while digits still veil the video, so cuts are invisible
       if (act === 1 && prog > 0.5) setAct(2);
       else if (act === 2 && prog < 0.42) setAct(1);
-      else if (act === 2 && prog > SCRUB_START) { preloadFrames(); setAct(3); }
+      else if (act === 2 && prog > SCRUB_START) setAct(3);
       else if (act === 3 && prog < SCRUB_START - 0.04) setAct(2);
       if (act === 3) {
-        drawPanFrame((Math.min(1, Math.max(0, prog)) - SCRUB_START) / (1 - SCRUB_START));
+        scrubPan((Math.min(1, Math.max(0, prog)) - SCRUB_START) / (1 - SCRUB_START));
       }
       document.body.classList.toggle('screen-locked', act === 3 && prog >= 1);
     });
   }
 
-  /* ---------- On-screen story beats ----------
-     Once locked onto the cinema screen, #cinema supplies scroll BUDGET
-     only - its stage stays pinned (position: sticky) at the same spot
-     in the viewport for the whole section, and scroll progress just
-     cross-fades between beats (title -> collage -> work cards), like a
-     film reel advancing, rather than being scrolled past. */
+  /* ---------- Opening trailer ----------
+     The pan's last frame holds for a beat, the projector falls to black,
+     and the pinned screen advances through five title/footage cuts. */
   const cinemaEl = document.getElementById('cinema');
   if (cinemaEl) {
     const beats = Array.from(cinemaEl.querySelectorAll('.screen-beat'));
-    const cinemaCollage = cinemaEl.querySelector('.collage');
+    const stage = cinemaEl.querySelector('.screen-stage');
+    const counter = cinemaEl.querySelector('.trailer-counter b');
     const screenImg = document.querySelector('#screen-lock-bg img');
-    let cinemaWhizzing = false;
 
     function smooth(a, b, x) {
       const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
@@ -456,26 +368,26 @@
       const n = beats.length;
       beats.forEach((el, i) => {
         const start = i / n, end = (i + 1) / n;
-        const fadeIn = smooth(start, start + 0.1, prog);
-        const fadeOut = i === n - 1 ? 1 : 1 - smooth(end - 0.1, end, prog);
+        const fadeIn = i === 0 ? 1 : smooth(start, start + 0.055, prog);
+        const fadeOut = i === n - 1 ? 1 : 1 - smooth(end - 0.055, end, prog);
         const o = Math.min(fadeIn, fadeOut);
+        const local = Math.max(0, Math.min(1, (prog - start) / Math.max(.001, end - start)));
         el.style.opacity = o.toFixed(3);
-        el.style.transform = 'translateY(' + ((1 - fadeIn) * 26) + 'px)';
+        el.style.transform = 'translateY(' + ((1 - fadeIn) * 18) + 'px)';
+        el.style.setProperty('--trailer-scale', (1.09 - local * .065).toFixed(4));
         el.classList.toggle('is-active', o > 0.5);
       });
-      if (cinemaCollage) {
-        const inBand = prog > 1 / n && prog < 2 / n;
-        if (inBand && !cinemaWhizzing) { cinemaCollage.classList.add('whiz'); cinemaWhizzing = true; }
-        else if (!inBand && cinemaWhizzing) { cinemaCollage.classList.remove('whiz'); cinemaWhizzing = false; }
+      if (stage) {
+        stage.style.setProperty('--leader-white', (1 - smooth(0, .045, prog)).toFixed(3));
       }
-      // The screen stays its true bright colour through every on-screen
-      // beat (title/collage/cards all use dark-on-light for exactly this
-      // reason) and only dims, scroll-scrubbed rather than timed, in the
-      // last stretch of #cinema's budget - settling well before Speaking/
-      // Contact, which are styled light-on-dark against the dimmed screen.
+      if (counter) {
+        const seconds = Math.floor(prog * 18);
+        const frames = Math.floor((prog * 18 - seconds) * 24);
+        counter.textContent = '00:00:' + String(seconds).padStart(2, '0') + ':' + String(frames).padStart(2, '0');
+      }
       if (screenImg) {
-        const dim = smooth(0.90, 1.0, prog);
-        screenImg.style.filter = 'brightness(' + (1 - dim * 0.68).toFixed(3) + ') saturate(1.08)';
+        const dim = smooth(0, .055, prog);
+        screenImg.style.filter = 'brightness(' + (1 - dim * .94).toFixed(3) + ') saturate(1.02)';
       }
     }
     onSmoothScroll(updateCinema);

@@ -34,11 +34,10 @@
   <!-- ============ HERO: digits dissolve into presence ============ -->
   <header id="hero">
     <div class="hero-sticky">
-      <!-- All three act layers are stacked and loaded once up front -
-           acts switch by toggling opacity, never by swapping src, so
-           there is no fetch/decode stall at any cut. Act three is not a
-           video at all: it's a canvas scrubbed through JPEG frames by
-           scroll position (js/effects.js), Apple-product-page style. -->
+      <!-- All three act layers are stacked and loaded once up front.
+           The final camera move is a single, keyframe-dense MP4 scrubbed
+           by scroll, so the pan remains reversible without asking the
+           browser to fetch 193 separate JPEGs. -->
       <div id="hero-media" aria-hidden="true">
         <video id="hero-video" class="act-layer is-active" muted autoplay loop playsinline preload="auto" poster="assets/aaron-portrait.jpg">
           <source src="assets/aaron-portrait.mp4" type="video/mp4">
@@ -46,7 +45,9 @@
         <video id="hero-video-2" class="act-layer" muted playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
           <source src="assets/aaron-room.mp4" type="video/mp4">
         </video>
-        <canvas id="pan-canvas" class="act-layer" aria-hidden="true"></canvas>
+        <video id="hero-pan-video" class="act-layer" muted playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
+          <source src="assets/aaron-pan-to-screen.mp4" type="video/mp4">
+        </video>
         <img id="hero-image" src="assets/aaron-portrait.jpg" alt="">
       </div>
       <div id="hero-glow" aria-hidden="true"></div>
@@ -76,38 +77,58 @@
 
   <!-- ============ SCREEN LOCK: persistent cinema-screen frame for the
        rest of the site, seeded from the pan video's final frame ============ -->
-  <div id="screen-lock-bg" aria-hidden="true"><img src="assets/screen-zoom.jpg" alt=""></div>
+  <div id="screen-lock-bg" aria-hidden="true"><img src="assets/pan-end-frame.jpg" alt=""></div>
   <div id="screen-bezel" aria-hidden="true"></div>
 
-  <!-- ============ CODE & CREATIVITY: plays ON the locked screen ============
-       The backdrop/bezel above never move again once locked - everything
-       here is a scroll-driven cross-fade projected onto that same fixed
-       frame, like a film reel, not a page you scroll down into. ============ -->
-  <section id="cinema" aria-label="Aaron's work, obsessions and story">
+  <!-- ============ TRAILER: the cinema screen becomes the page ============
+       The opening frame is the pan video's exact final frame. It falls to
+       black as the film starts, then a short scroll-directed title sequence
+       introduces the vocabulary of the work without becoming another
+       portfolio card wall. ============ -->
+  <section id="cinema" aria-label="Opening trailer">
     <div class="screen-stage">
-      <div class="screen-beat screen-beat--title" aria-hidden="true">
-        <p class="screen-kicker mono">Now inside the screen</p>
-        <p class="screen-headline">Code <em>&amp;</em> Creativity</p>
+      <div class="trailer-letterbox" aria-hidden="true"></div>
+      <div class="trailer-counter mono" aria-hidden="true"><span>AJ</span><b>00:00:00</b></div>
+
+      <div class="screen-beat trailer-beat trailer-beat--leader" aria-hidden="true">
+        <p class="trailer-overline mono">AARON JONES PRESENTS</p>
+        <h2><span>One idea.</span><strong>Carried through.</strong></h2>
+        <i class="trailer-rule"></i>
       </div>
-      <div class="screen-beat screen-beat--collage" aria-hidden="true">
-        <div class="collage">
-          <img class="chip" style="--tx:-38vw; --ty:-22vh; --rot:-14deg; --d:0.02s" src="assets/medal.jpg" alt="">
-          <img class="chip" style="--tx:34vw; --ty:-28vh; --rot:11deg; --d:0.08s" src="assets/laurel.jpg" alt="">
-          <img class="chip" style="--tx:-30vw; --ty:20vh; --rot:9deg; --d:0.14s" src="assets/camera.jpg" alt="">
-          <img class="chip" style="--tx:36vw; --ty:16vh; --rot:-8deg; --d:0.05s" src="assets/clapper.jpg" alt="">
-          <img class="chip" style="--tx:-14vw; --ty:-34vh; --rot:6deg; --d:0.2s" src="assets/aaron-stage.jpg" alt="">
-          <img class="chip" style="--tx:16vw; --ty:32vh; --rot:-11deg; --d:0.11s" src="assets/aaron-cannes.jpg" alt="">
-          <img class="chip" style="--tx:-42vw; --ty:2vh; --rot:-5deg; --d:0.17s" src="assets/bsh-film-card.jpg" alt="">
-          <img class="chip" style="--tx:42vw; --ty:-2vh; --rot:13deg; --d:0.23s" src="assets/cinema-still.jpg" alt="">
-          <img class="chip" style="--tx:2vw; --ty:38vh; --rot:4deg; --d:0.26s" src="assets/figure.jpg" alt="">
+
+      <div class="screen-beat trailer-beat trailer-beat--stage" aria-hidden="true">
+        <div class="trailer-media"><img src="assets/aaron-stage.jpg" alt=""></div>
+        <div class="trailer-caption">
+          <span class="mono">01 / UNDERSTAND</span>
+          <p>Research</p>
+          <strong>made legible.</strong>
         </div>
       </div>
-      <div class="screen-beat screen-beat--cards">
-        <div class="cin-cards stagger">
-          <div class="cin-card" style="--i:0"><span class="meta mono">I lead</span><p>Companies · technical teams · executive rooms · creative communities · international stages</p></div>
-          <div class="cin-card" style="--i:1"><span class="meta mono">I build</span><p>Frontier research · working code · memorable experiences · products people use</p></div>
-          <div class="cin-card" style="--i:2"><span class="meta mono">I connect</span><p>The server room · the studio · the boardroom · the stage · the people needed to ship</p></div>
+
+      <div class="screen-beat trailer-beat trailer-beat--build" aria-hidden="true">
+        <div class="trailer-build-grid">
+          <span>RESEARCH</span><i></i><span>CODE</span><i></i><span>PRODUCT</span>
         </div>
+        <div class="trailer-caption trailer-caption--centre">
+          <span class="mono">02 / BUILD</span>
+          <p>Possibility</p>
+          <strong>made real.</strong>
+        </div>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--movement" aria-hidden="true">
+        <div class="trailer-media"><img src="assets/bsh-film-card.jpg" alt=""></div>
+        <div class="trailer-caption">
+          <span class="mono">03 / MOVE</span>
+          <p>Experiences</p>
+          <strong>made to travel.</strong>
+        </div>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--end" aria-hidden="true">
+        <p class="trailer-overline mono">AARON JONES / CREATIVE TECHNOLOGIST</p>
+        <h2>The work<br><em>starts here.</em></h2>
+        <a class="trailer-enter mono" href="#mind-os" tabindex="-1">ENTER THE WORK <span>↓</span></a>
       </div>
     </div>
   </section>
@@ -720,7 +741,6 @@
     <span class="mono">Code, rendered human.</span>
   </footer>
 
-  <script type="module" src="js/pan-frames.js"></script>
   <script type="module" src="js/digit-hero.js"></script>
   <script type="module" src="js/effects.js"></script>
   <script type="module" src="js/reflection.js"></script>
