@@ -1,8 +1,7 @@
+.env
+.env.*
+!.env.example
 node_modules/
-dist/
-.next/
-next-env.d.ts
-.DS_Store
-shot.js
-shot-*.png
-refl-shot.js
+*.tar.gz
+*.tgz
+*.zip

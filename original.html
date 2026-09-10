@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaron Jones BEM | Creative Technologist, AI Builder and Storyteller</title>
+  <meta name="description" content="Aaron Jones BEM is a creative technologist, AI builder and storyteller who turns frontier research into products, experiences and movements.">
+  <meta property="og:title" content="Aaron Jones BEM | A storyteller who ships code">
+  <meta property="og:description" content="From real-time AI avatars and world models to live creative experiences and international hackathons. Research understood, code shipped, people brought with it.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#050b14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;600&family=Anton&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90' fill='%236fc9ff' font-family='monospace'>0</text></svg>">
+</head>
+<body>
+  <a class="skip-link" href="#mind-os">Skip to portfolio</a>
+
+  <div id="progress-bar" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <a class="brand-mini" href="#hero"><span class="bm-name">Aaron Jones</span><span class="bm-hand">creative technologist</span></a>
+    <div class="links">
+      <a class="roll" href="#mind-os"><span data-txt="Work">Work</span></a>
+      <a class="roll" href="#server-room"><span data-txt="Research">Research</span></a>
+      <a class="roll" href="#speaking"><span data-txt="Speaking">Speaking</span></a>
+      <a class="roll" href="#about"><span data-txt="About">About</span></a>
+      <a class="roll" href="#contact"><span data-txt="Contact">Contact</span></a>
+    </div>
+  </nav>
+
+  <!-- ============ HERO: digits dissolve into presence ============ -->
+  <header id="hero">
+    <div class="hero-sticky">
+      <!-- The opening begins inside the audience, then cross-dissolves into
+           one continuous, scroll-scrubbed camera move towards the screen. -->
+      <div id="hero-media" aria-hidden="true">
+        <video id="hero-video-2" class="act-layer is-active" muted autoplay loop playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
+          <source src="assets/aaron-room.mp4" type="video/mp4">
+        </video>
+        <video id="hero-pan-video" class="act-layer" muted playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
+          <source src="assets/aaron-pan-to-screen.mp4" type="video/mp4">
+        </video>
+        <img id="hero-image" src="assets/aaron-portrait.jpg" alt="">
+      </div>
+      <div id="hero-glow" aria-hidden="true"></div>
+      <canvas id="digit-canvas" aria-hidden="true"></canvas>
+      <div class="hero-vignette" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+
+      <div class="hero-copy">
+        <h1 class="hero-name">Aaron Jones<span class="handwritten" aria-label="creative technologist">creative technologist</span></h1>
+      </div>
+      <div class="hero-dark" aria-hidden="true"></div>
+      <p class="bridging-1 serif" aria-hidden="true">I carry difficult ideas</p>
+      <p class="bridging-2 serif" aria-hidden="true">all the way <em>through.</em></p>
+
+      <div class="hero-foot" aria-label="Social links">
+        <div class="socials">
+          <a class="roll" href="https://www.linkedin.com/in/aaronbenjaminjones" rel="noopener"><span data-txt="LinkedIn">LinkedIn</span></a>
+          <a class="roll" href="https://github.com/yepicaiaaron" rel="noopener"><span data-txt="GitHub">GitHub</span></a>
+          <a class="roll" href="https://twitter.com/aaronjonesbiz" rel="noopener"><span data-txt="X">X</span></a>
+          <a class="roll" href="https://www.instagram.com/aaron_benjamin_jones" rel="noopener"><span data-txt="Instagram">Instagram</span></a>
+          <a class="roll" href="mailto:aaronjonesvideo@gmail.com"><span data-txt="Email">Email</span></a>
+        </div>
+        <a class="menu-link handwritten-sm" href="#about">menu ↓</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ SCREEN LOCK: persistent cinema-screen frame for the
+       rest of the site, seeded from the pan video's final frame ============ -->
+  <div id="screen-lock-bg" aria-hidden="true"><img src="assets/pan-end-frame.jpg" alt=""></div>
+  <div id="screen-bezel" aria-hidden="true"></div>
+
+  <!-- ============ TRAILER: the cinema screen becomes the page ============
+       The opening frame is the pan video's exact final frame. It falls to
+       black as the film starts, then a short scroll-directed title sequence
+       introduces the vocabulary of the work without becoming another
+       portfolio card wall. ============ -->
+  <section id="cinema" aria-label="Opening trailer">
+    <div class="screen-stage">
+      <div class="trailer-letterbox" aria-hidden="true"></div>
+      <div class="trailer-counter mono" aria-hidden="true"><span>AJ</span><b>00:00:00</b></div>
+
+      <div class="screen-beat trailer-beat trailer-beat--leader" aria-hidden="true">
+        <p class="trailer-overline mono">AARON JONES PRESENTS</p>
+        <h2><span>One idea.</span><strong>Carried through.</strong></h2>
+        <i class="trailer-rule"></i>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--stage" aria-hidden="true">
+        <div class="trailer-media"><img src="assets/aaron-stage.jpg" alt=""></div>
+        <div class="trailer-caption">
+          <span class="mono">01 / UNDERSTAND</span>
+          <p>See what</p>
+          <strong>became possible.</strong>
+        </div>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--build" aria-hidden="true">
+        <div class="trailer-build-grid">
+          <span>RESEARCH</span><i></i><span>CODE</span><i></i><span>PRODUCT</span>
+        </div>
+        <div class="trailer-caption trailer-caption--centre">
+          <span class="mono">02 / BUILD</span>
+          <p>Make it</p>
+          <strong>work in reality.</strong>
+        </div>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--movement" aria-hidden="true">
+        <div class="trailer-media"><img src="assets/bsh-film-card.jpg" alt=""></div>
+        <div class="trailer-caption">
+          <span class="mono">03 / MOVE</span>
+          <p>Give it</p>
+          <strong>an audience.</strong>
+        </div>
+      </div>
+
+      <div class="screen-beat trailer-beat trailer-beat--end" aria-hidden="true">
+        <p class="trailer-overline mono">AARON JONES / CREATIVE TECHNOLOGIST</p>
+        <h2>The work<br><em>starts here.</em></h2>
+        <a class="trailer-enter mono" href="#mind-os" tabindex="-1">ENTER THE WORK <span>↓</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE FOUR ROOMS / VERSION 5 ============
+       A natural-scroll narrative. Each viewport carries one idea, one
+       artefact and one outcome instead of compressing the portfolio into
+       a dashboard. -->
+  <section id="mind-os" class="journey-v5" aria-label="A journey through Aaron's research, creative work, leadership and speaking">
+    <aside class="journey-rail" aria-label="Portfolio chapters">
+      <a class="journey-mark" href="#mind-os" aria-label="Beginning of the journey">AJ</a>
+      <div class="journey-line" aria-hidden="true"><i></i></div>
+      <nav>
+        <a class="is-active" href="#threshold" data-room-link="threshold"><b>00</b><span>Threshold</span></a>
+        <a href="#server-room" data-room-link="server"><b>01</b><span>Server room</span></a>
+        <a href="#studio-room" data-room-link="studio"><b>02</b><span>Studio</span></a>
+        <a href="#engine-room" data-room-link="engine"><b>03</b><span>Engine room</span></a>
+        <a href="#stage-room" data-room-link="stage"><b>04</b><span>Stage</span></a>
+      </nav>
+      <span class="journey-counter mono"><b>01</b> / 17</span>
+    </aside>
+
+    <div class="journey-flow">
+      <article class="story-moment threshold-moment" id="threshold" data-room="threshold" data-moment="1">
+        <div class="threshold-noise" aria-hidden="true"></div>
+        <div class="moment-inner moment-inner--centre">
+          <p class="moment-kicker mono">THE FLOOR PLAN OF HOW I THINK</p>
+          <h2>Most people choose a room.</h2>
+          <p class="threshold-answer">I built the doors between them.</p>
+          <p class="moment-lede">Enter through the problem. I will carry the idea through the rest.</p>
+          <span class="scroll-invitation mono">SCROLL DOWN TO MOVE THROUGH THE CORRIDOR ↓</span>
+        </div>
+      </article>
+
+      <article class="story-moment corridor-moment" data-room="threshold" data-moment="2">
+        <div class="corridor-sticky">
+          <div class="corridor-perspective" aria-hidden="true">
+            <i class="corridor-ceiling"></i>
+            <i class="corridor-floor"></i>
+            <i class="corridor-light corridor-light--one"></i>
+            <i class="corridor-light corridor-light--two"></i>
+            <i class="corridor-light corridor-light--three"></i>
+          </div>
+          <header class="corridor-heading">
+            <p class="moment-kicker mono">FOUR WAYS TO BEGIN / ONE CONNECTED PRACTICE</p>
+            <p>Choose a door.</p>
+            <span class="mono">The corridor moves as you scroll</span>
+          </header>
+
+          <div class="corridor-viewport">
+            <div class="corridor-track" data-corridor-track>
+              <a class="practice-door is-active" href="#server-room" data-practice-door="0" style="--door-accent:#9cff57;--door-image:url('assets/figure.jpg')">
+                <span class="door-number mono">01 / SERVER ROOM</span>
+                <span class="door-frame">
+                  <span class="door-glimpse" aria-hidden="true"></span>
+                  <span class="door-handle" aria-hidden="true"></span>
+                </span>
+                <span class="door-copy">
+                  <small class="mono">FRONTIER PRODUCT SPRINT</small>
+                  <strong>Turn research into a working direction.</strong>
+                  <span>A tested product idea and credible prototype.</span>
+                  <b>SoulX · Story Machine · VidVoice <i>Enter room ↗</i></b>
+                </span>
+              </a>
+
+              <a class="practice-door" href="#studio-room" data-practice-door="1" style="--door-accent:#ee5744;--door-image:url('assets/camera.jpg')">
+                <span class="door-number mono">02 / STUDIO</span>
+                <span class="door-frame">
+                  <span class="door-glimpse" aria-hidden="true"></span>
+                  <span class="door-handle" aria-hidden="true"></span>
+                </span>
+                <span class="door-copy">
+                  <small class="mono">EXPERIENTIAL AI COMMISSION</small>
+                  <strong>Make the technology impossible to ignore.</strong>
+                  <span>An interaction people understand and remember.</span>
+                  <b>Rory’s Confessional · SDAIA · Oracle <i>Enter room ↗</i></b>
+                </span>
+              </a>
+
+              <a class="practice-door" href="#engine-room" data-practice-door="2" style="--door-accent:#ffcf37;--door-image:url('assets/bsh-film-card.jpg')">
+                <span class="door-number mono">03 / ENGINE ROOM</span>
+                <span class="door-frame">
+                  <span class="door-glimpse" aria-hidden="true"></span>
+                  <span class="door-handle" aria-hidden="true"></span>
+                </span>
+                <span class="door-copy">
+                  <small class="mono">RESEARCH-TO-PRODUCTION INTERVENTION</small>
+                  <strong>Get the difficult thing across the line.</strong>
+                  <span>Unblock the system, team or handoff stopping it from shipping.</span>
+                  <b>Yepic · Big Screen Hack · Enterprise delivery <i>Enter room ↗</i></b>
+                </span>
+              </a>
+
+              <a class="practice-door" href="#stage-room" data-practice-door="3" style="--door-accent:#ff4f8b;--door-image:url('assets/aaron-stage.jpg')">
+                <span class="door-number mono">04 / STAGE</span>
+                <span class="door-frame">
+                  <span class="door-glimpse" aria-hidden="true"></span>
+                  <span class="door-handle" aria-hidden="true"></span>
+                </span>
+                <span class="door-copy">
+                  <small class="mono">EXECUTIVE + PRACTITIONER CAPABILITY</small>
+                  <strong>Give people a model they can use.</strong>
+                  <span>Clarity for leaders, builders and audiences.</span>
+                  <b>Boardrooms · Builder rooms · Main stages <i>Enter room ↗</i></b>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="corridor-status" aria-live="polite">
+            <span class="mono">CURRENT DOOR</span>
+            <b data-corridor-label>01 / FRONTIER PRODUCT SPRINT</b>
+            <i><span data-corridor-progress></span></i>
+          </div>
+        </div>
+      </article>
+
+      <section class="room-chapter room-chapter--server" id="server-room" data-room-chapter="server" aria-labelledby="server-title">
+        <article class="story-moment room-opening" data-room="server" data-moment="3">
+          <div class="room-atmosphere server-atmosphere" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="moment-inner">
+            <p class="room-number mono">ROOM 01 / CAN IT WORK?</p>
+            <h2 id="server-title">The Server Room</h2>
+            <p class="room-manifesto">I enter through the paper.<br><em>I leave through the product.</em></p>
+            <p class="moment-lede">Can the research survive reality?</p>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--soulx" data-room="server" data-moment="4">
+          <div class="moment-inner moment-grid">
+            <div class="artefact artefact--benchmark" aria-label="SoulX GPU optimisation benchmark">
+              <p class="mono">SOULX / IMPLEMENTATION NOTES</p>
+              <div class="gpu-before"><span>GPU</span><span>GPU</span><span>GPU</span><span>GPU</span></div>
+              <div class="benchmark-arrow">↓</div>
+              <div class="gpu-after"><span>GPU</span><small>production path</small></div>
+              <div class="benchmark-bars"><i style="--bar:32%"></i><i style="--bar:48%"></i><i style="--bar:68%"></i><i style="--bar:88%"></i></div>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">RESEARCH → COMMERCIAL REALITY</p>
+              <h3>The paper wanted four GPUs. The product could afford one.</h3>
+              <p>I profiled the SoulX avatar pipeline and reworked its inference path to run on one GPU, improving usable frame rate.</p>
+              <p class="ownership"><b>My role:</b> implementation, profiling, architecture and deployment.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--worlds" data-room="server" data-moment="5">
+          <div class="world-ribbon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="moment-inner moment-grid moment-grid--reverse">
+            <div class="moment-copy">
+              <p class="moment-kicker mono">STORY MACHINE / WHAT I AM BUILDING NOW</p>
+              <h3>Stop prompting clips.<br>Start directing worlds.</h3>
+              <p>A creative-production system for directing persistent cinematic worlds through language and gesture.</p>
+              <ul class="tech-lines"><li>Causal and autoregressive diffusion</li><li>Rolling KV-cache inference</li><li>Self-hosted models across GCP and Runpod</li></ul>
+            </div>
+            <div class="artefact artefact--world-model">
+              <span class="world-node world-node--director">DIRECTOR</span>
+              <span class="world-node world-node--story">STORY</span>
+              <span class="world-node world-node--space">WORLD</span>
+              <span class="world-node world-node--model">MODEL ROUTER</span>
+              <span class="world-node world-node--frame">LIVE FRAME</span>
+              <b class="world-pulse"></b>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--vidvoice" data-room="server" data-moment="6">
+          <div class="moment-inner moment-grid">
+            <div class="artefact artefact--waveform" aria-hidden="true">
+              <div class="waveform"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="face-lines"><span>VOICE</span><b>→</b><span>FACE</span><b>→</b><span>ANOTHER LANGUAGE</span></div>
+              <p class="mono">PATENT GB2601162A</p>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">VIDVOICE / RESEARCH → PATENT</p>
+              <h3>A live video call that speaks another language.</h3>
+              <p>Real-time lip-synchronised dubbing that translated speech and facial performance without breaking the human presence of a live conversation.</p>
+              <p class="outcome-line">Not post-production. Not a demo. Live.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="room-chapter room-chapter--studio" id="studio-room" data-room-chapter="studio" aria-labelledby="studio-title">
+        <article class="story-moment room-opening" data-room="studio" data-moment="7">
+          <div class="studio-contact-sheet" aria-hidden="true">
+            <figure><img src="assets/camera.jpg" alt=""><span>BUILD THE SET</span></figure>
+            <figure><img src="assets/cinema-still.jpg" alt=""><span>FILL THE SCREEN</span></figure>
+            <figure><img src="assets/aaron-cannes.jpg" alt=""><span>MEET THE AUDIENCE</span></figure>
+          </div>
+          <div class="moment-inner">
+            <p class="room-number mono">ROOM 02 / WILL ANYONE CARE?</p>
+            <h2 id="studio-title">The Studio</h2>
+            <p class="room-manifesto">A demo shows the technology.<br><em>An experience makes it matter.</em></p>
+            <p class="moment-lede">Find the human ritual. Build the moment people remember.</p>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--confessional" data-room="studio" data-moment="8">
+          <div class="confessional-curtain" aria-hidden="true"></div>
+          <div class="moment-inner moment-grid">
+            <div class="artefact artefact--confessional">
+              <span class="mono">RORY SUTHERLAND × MAD//FEST</span>
+              <strong>CONFESS<br>YOUR<br>MARKETING<br>SINS</strong>
+              <p>“Forgive me, Rory…”</p>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">BEHAVIOURAL THEATRE / LIVE AI</p>
+              <h3>The interface was not a screen. It was a cultural ritual.</h3>
+              <p>We built a church and invited marketers to confess to Rory Sutherland’s digital double. People queued because the technology had become theatre.</p>
+              <p class="ownership"><b>My role:</b> concept, participant journey, interaction and technical delivery.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--coach" data-room="studio" data-moment="9">
+          <div class="moment-inner moment-grid moment-grid--reverse">
+            <div class="moment-copy">
+              <p class="moment-kicker mono">SDAIA × KSU / HUMAN DEVELOPMENT</p>
+              <h3>Practise the interview before it can change your life.</h3>
+              <p>A bilingual avatar gave students a private, repeatable place to rehearse consequential interviews and receive structured feedback.</p>
+              <div class="human-metrics"><span><b>100+</b> students</span><span><b>92%</b> found it helpful</span><span><b>2</b> languages</span></div>
+              <p class="outcome-line">The breakthrough was psychological safety.</p>
+            </div>
+            <div class="artefact artefact--coach">
+              <div class="coach-avatar"><span>AI</span><i></i></div>
+              <p class="mono">INTERVIEW / 04:12 / LISTENING IN ARABIC</p>
+              <blockquote>Tell me about a time you led through uncertainty.</blockquote>
+              <div class="coach-response"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--data" data-room="studio" data-moment="10">
+          <div class="moment-inner moment-grid">
+            <div class="artefact artefact--clearance" aria-hidden="true">
+              <span class="clearance-layer">PUBLIC</span><span class="clearance-layer">OPERATIONS</span><span class="clearance-layer">EXECUTIVE</span>
+              <div class="data-face">DATA<br><b>THAT</b><br>SPEAKS</div>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">ORACLE × ABU DHABI AVIATION</p>
+              <h3>Ask a complicated organisation a question. Have the answer look you in the eye.</h3>
+              <p>Permission-aware data became live charts, narration and answers adapted to each person’s role, understanding and clearance.</p>
+              <p class="ownership"><b>My role:</b> experience concept, information flow, interaction and delivery.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="room-chapter room-chapter--engine" id="engine-room" data-room-chapter="engine" aria-labelledby="engine-title">
+        <article class="story-moment room-opening" data-room="engine" data-moment="11">
+          <div class="engine-belts" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="moment-inner">
+            <p class="room-number mono">ROOM 03 / CAN WE MAKE IT HAPPEN?</p>
+            <h2 id="engine-title">The Engine Room</h2>
+            <p class="room-manifesto">Ideas rarely die from imagination.<br><em>They die in the handoff.</em></p>
+            <p class="moment-lede">I stay through the handoff.</p>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--yepic" data-room="engine" data-moment="12">
+          <div class="moment-inner moment-grid">
+            <div class="scale-proof" aria-label="Yepic commercial results">
+              <span><b>100,000+</b><small>users</small></span>
+              <span><b>2,000+</b><small>paying customers</small></span>
+              <span><b>61</b><small>countries</small></span>
+              <span><b>£1m+</b><small>ARR</small></span>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">YEPIC AI / CATEGORY BEFORE CONSENSUS</p>
+              <h3>We built AI video before AI video had a category.</h3>
+              <p>I co-founded and exited one of the UK’s earliest generative-video companies, moving between research, product, enterprise delivery and commercialisation.</p>
+              <p class="ownership"><b>My role:</b> align every discipline around the same outcome.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--hack" data-room="engine" data-moment="13">
+          <div class="moment-inner moment-grid moment-grid--reverse">
+            <div class="moment-copy">
+              <p class="moment-kicker mono">BIG SCREEN HACK / MOVEMENT IN 48 HOURS</p>
+              <h3>Do not argue with the gatekeepers. Build a bigger screen.</h3>
+              <p>I created the format and assembled the partners. Films made in one weekend travelled from London to Cannes and New York.</p>
+              <div class="hack-route mono"><span>LONDON</span><i>→</i><span>CANNES</span><i>→</i><span>NEW YORK</span></div>
+              <p class="ownership"><b>My role:</b> vision, format, partnerships, production and community.</p>
+            </div>
+            <div class="artefact artefact--contact-sheet">
+              <img src="assets/bsh-film-card.jpg" alt="A film produced through Big Screen Hack">
+              <img src="assets/aaron-cannes.jpg" alt="Aaron Jones at a Cannes screening">
+              <img src="assets/cinema-still.jpg" alt="Aaron Jones presenting inside a cinema">
+              <span class="contact-stamp">48 HOURS<br>REAL SCREEN</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="story-moment case-moment case-moment--delivery" data-room="engine" data-moment="14">
+          <div class="moment-inner moment-grid">
+            <div class="delivery-ledger" aria-label="Selected enterprise and public-sector delivery">
+              <span><b>Government of Oman</b><small>national communications</small></span>
+              <span><b>Banking</b><small>trust and personalisation</small></span>
+              <span><b>Oracle</b><small>enterprise data experience</small></span>
+              <span><b>Abu Dhabi Aviation</b><small>operational intelligence</small></span>
+              <span><b>London Tech Week</b><small>live audience experience</small></span>
+            </div>
+            <div class="moment-copy">
+              <p class="moment-kicker mono">ENTERPRISE / GOVERNMENT / REGULATED INDUSTRY</p>
+              <h3>The same idea can survive a research call, a boardroom and a ministerial room.</h3>
+              <p>I translate between technical, creative, commercial and institutional teams until the system works beyond the demo.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="room-chapter room-chapter--stage" id="stage-room" data-room-chapter="stage" aria-labelledby="stage-title">
+        <article class="story-moment room-opening stage-opening" data-room="stage" data-moment="15">
+          <img class="stage-hero-image" src="assets/aaron-stage.jpg" alt="Aaron Jones speaking on an international stage">
+          <div class="stage-shade" aria-hidden="true"></div>
+          <div class="moment-inner">
+            <p class="room-number mono">ROOM 04 / CAN EVERYONE ELSE SEE IT?</p>
+            <h2 id="stage-title">The Stage</h2>
+            <p class="room-manifesto">I make difficult futures<br><em>feel possible.</em></p>
+          </div>
+        </article>
+
+        <article class="story-moment audience-moment" data-room="stage" data-moment="16" id="speaking">
+          <div class="moment-inner">
+            <p class="moment-kicker mono">ONE PRACTITIONER / THREE ROOMS</p>
+            <div class="audience-sequence">
+              <article><span>01</span><p class="mono">THE BOARDROOM</p><h3>Make it legible.</h3><p>Turn abstract urgency into informed action.</p></article>
+              <article><span>02</span><p class="mono">THE BUILDER ROOM</p><h3>Make people capable.</h3><p>Teach from practical implementation, not second-hand theory.</p></article>
+              <article><span>03</span><p class="mono">THE MAIN STAGE</p><h3>Make it memorable.</h3><p>Give an audience a model they can remember and use.</p></article>
+            </div>
+            <blockquote class="stage-quote">I do not commentate on AI from the sidelines. I research it, code it, commercialise it, teach it and create culture with it.</blockquote>
+          </div>
+        </article>
+
+        <article class="story-moment talk-moment" data-room="stage" data-moment="17">
+          <div class="moment-inner">
+            <p class="moment-kicker mono">CURRENT KEYNOTES</p>
+            <div class="talk-list">
+              <article><span>01</span><h3>From Paper to Product to Culture</h3><p>How frontier AI becomes something people can use, trust and remember.</p></article>
+              <article><span>02</span><h3>Creativity at the Speed of Thought</h3><p>What world models, agents and real-time media change about human creativity.</p></article>
+              <article><span>03</span><h3>The Three Rooms Every AI Project Must Survive</h3><p>Technical truth, creative imagination and operational execution.</p></article>
+            </div>
+            <div class="stage-credentials mono"><span>LEAP</span><span>DEEPFEST</span><span>GLOBAL AI SUMMIT</span><span>LONDON TECH WEEK</span><span>FTSE 100 TEAMS</span></div>
+            <a class="stage-booking" href="mailto:aaronjonesvideo@gmail.com?subject=Speaking%20enquiry%20for%20Aaron%20Jones">Book Aaron to speak <span>↗</span></a>
+          </div>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <main id="main">
+    <section class="portfolio-section origin-section" id="about">
+      <div class="section-shell origin-grid">
+        <div>
+          <p class="kicker mono">The shortest possible origin story</p>
+          <h2 data-decrypt>Before I generated worlds, I photographed them.</h2>
+        </div>
+        <div class="origin-copy reveal">
+          <p>Photography led to fashion, commerce and computer vision. Computer vision led to generative video, then to building companies, products and experiences before the category had a name.</p>
+          <p>The tools keep changing. The thread does not: <strong>understand what has become possible, make it human and ship it while the idea is still alive.</strong></p>
+          <p class="origin-note mono">British Empire Medal · Great British Entrepreneur Awards · EY Future 50 · University of Essex Alumni of the Year</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="portfolio-section contact-section pathways" id="contact">
+      <div class="section-shell">
+        <p class="kicker mono">THREE WAYS IN</p>
+        <h2 data-decrypt>Bring me the thing<br>without a playbook.</h2>
+        <div class="pathway-list">
+          <a href="mailto:aaronjonesvideo@gmail.com?subject=Build%20with%20Aaron%20Jones">
+            <span class="mono">01 / CLIENTS + COLLABORATORS</span>
+            <h3>Build with me.</h3>
+            <p>When the idea exists in research, slides or imagination, but not yet in reality.</p>
+            <i>Start a project ↗</i>
+          </a>
+          <a href="mailto:aaronjonesvideo@gmail.com?subject=Story%20Machine%20and%20investment">
+            <span class="mono">02 / INVESTORS + PARTNERS</span>
+            <h3>Back what I’m building.</h3>
+            <p>Story Machine and a new way to direct living, agentic media.</p>
+            <i>Discuss the thesis ↗</i>
+          </a>
+          <a href="mailto:aaronjonesvideo@gmail.com?subject=Speaking%20enquiry%20for%20Aaron%20Jones">
+            <span class="mono">03 / EVENTS + LEADERSHIP TEAMS</span>
+            <h3>Book me to speak.</h3>
+            <p>Give your audience a model they can understand, remember and use.</p>
+            <i>Check availability ↗</i>
+          </a>
+        </div>
+        <div class="contact-quiet">
+          <a href="https://calendar.app.google/psVYSoU44vFUrVDz5" rel="noopener">Book a call</a>
+          <a href="https://www.linkedin.com/in/aaronbenjaminjones" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/yepicaiaaron" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="mono">© <span id="year">2026</span> Aaron Jones BEM · Based in London</span>
+    <span class="mono">Ideas, carried through.</span>
+  </footer>
+
+  <script type="module" src="js/digit-hero.js"></script>
+  <script type="module" src="js/effects.js"></script>
+  <script type="module" src="js/reflection.js"></script>
+  <script src="js/motion-fx.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script type="module" src="js/portfolio-os.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a387af7b6e2ed23c',t:'MTc4ODk3MjU1OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,12 @@
+Research talking-head visual
+
+Source: Soul AI Lab, SoulX-FlashHead project demonstration.
+Project: https://soul-ailab.github.io/soulx-flashhead/
+Video: https://github.com/Soul-AILab/Soul-AILab.github.io/raw/refs/heads/main/soulx-flashhead/static/examples/short/xtt_wan.mp4
+Licence stated on the project page: Creative Commons Attribution-ShareAlike 4.0 International.
+Licence: https://creativecommons.org/licenses/by-sa/4.0/
+Changes: the website samples the video into blue code-character luminance; muted looping playback. The accompanying poster is an extracted source frame. This code-rendered adaptation is provided under the same CC BY-SA 4.0 terms.
+
+This is an upstream model demonstration, not a recording of Aaron's own integration or proof of authorship of the base model. Aaron's work is linked separately: https://github.com/yepicaiaaron/soulx-livekit-avatar
+
+GitHub Invertocat: official, unmodified white asset from https://brand.github.com/GitHub_Logos.zip ; shown as a link to Aaron's GitHub repository, with no implication of GitHub endorsement.

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaron Jones — Building what comes next</title>
+  <meta name="description" content="Aaron Jones. Builder, technologist and strategist pioneering new ways to learn, connect and create. Projects, speaking and consulting.">
+  <meta property="og:title" content="Aaron Jones — Building what comes next">
+  <meta property="og:description" content="From social enterprise and visual search to generative video, live AI experiences and world models.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#050b14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css?v=c9349c5fbd">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90' fill='%236fc9ff' font-family='monospace'>0</text></svg>">
+<link rel="stylesheet" href="css/pioneer.css?v=7bcc164a20"><link rel="preload" href="assets/fonts/homemade.woff2" as="font" type="font/woff2" crossorigin></head>
+<body>
+  <a class="skip-link" href="#work">Skip to portfolio</a>
+
+  <div id="progress-bar" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <a class="brand-mini" href="#hero"><span class="bm-name">Aaron Jones</span><span class="bm-hand">creative technologist</span></a>
+    <div class="links">
+      <a class="roll" href="#work"><span data-txt="Work">Work</span></a>
+      <a class="roll" href="#frontier"><span data-txt="Research">Research</span></a>
+      <a class="roll" href="#speaking"><span data-txt="Speaking">Speaking</span></a>
+      <a class="roll" href="#contact"><span data-txt="About">About</span></a>
+      <a class="roll" href="#contact"><span data-txt="Contact">Contact</span></a>
+    </div>
+  </nav>
+
+  <!-- ============ HERO: digits dissolve into presence ============ -->
+  <header id="hero">
+    <div class="hero-sticky">
+      <!-- The opening begins inside the audience, then cross-dissolves into
+           one continuous, scroll-scrubbed camera move towards the screen. -->
+      <div id="hero-media" aria-hidden="true">
+        <video id="hero-video-2" class="act-layer is-active" muted autoplay loop playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
+          <source src="assets/aaron-room.mp4" type="video/mp4">
+        </video>
+        <video id="hero-pan-video" class="act-layer" muted playsinline preload="auto" poster="assets/aaron-room-poster.jpg">
+          <source src="assets/aaron-pan-to-screen.mp4" type="video/mp4">
+        </video>
+        <img id="hero-image" src="assets/aaron-portrait.jpg" alt="">
+      </div>
+      <div id="hero-glow" aria-hidden="true"></div>
+      <canvas id="digit-canvas" aria-hidden="true"></canvas>
+      <div class="hero-vignette" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+
+      <div class="hero-copy">
+        <h1 class="hero-name">Aaron Jones<span class="handwritten" aria-label="Builder, technologist, strategist">Builder. Technologist. Strategist.</span></h1>
+      </div>
+      <div class="hero-dark" aria-hidden="true"></div>
+      <p class="bridging-1 serif" aria-hidden="true">Before anything, I’m a builder.</p>
+      <p class="bridging-2 serif" aria-hidden="true">I’ve spent my career building what comes next.</p>
+
+      <div class="hero-foot" aria-label="Social links">
+        <div class="socials">
+          <a class="roll" href="https://www.linkedin.com/in/aaronbenjaminjones" rel="noopener"><span data-txt="LinkedIn">LinkedIn</span></a>
+          <a class="roll" href="https://github.com/yepicaiaaron" rel="noopener"><span data-txt="GitHub">GitHub</span></a>
+          <a class="roll" href="https://twitter.com/aaronjonesbiz" rel="noopener"><span data-txt="X">X</span></a>
+          <a class="roll" href="https://www.instagram.com/aaron_benjamin_jones" rel="noopener"><span data-txt="Instagram">Instagram</span></a>
+          <a class="roll" href="mailto:aaronjonesvideo@gmail.com"><span data-txt="Email">Email</span></a>
+        </div>
+        <a class="menu-link handwritten-sm" href="#work">Explore the story ↓</a>
+      </div>
+    </div>
+  </header>
+
+<main id="screen-story" aria-label="A career building what comes next">
+ <div class="projection">
+  <div class="screen-paper">
+   <header class="screen-top"><a href="#hero" aria-label="Back to the introduction">Aaron Jones <span>BEM</span></a><span id="scene-title">What comes next?</span><nav aria-label="Explore"><button data-library type="button">All work</button><button id="motion-toggle" type="button">Read without motion</button><a class="nav-contact" href="mailto:aaronjonesvideo@gmail.com?subject=Let%E2%80%99s%20talk">Let’s talk</a></nav></header>
+   <div class="story-stage" id="story-stage"></div>
+   <footer class="screen-controls"><button id="previous-scene" aria-label="Previous chapter">←</button><span id="scene-counter">01 / 10</span><div class="film-progress"><i></i></div><span class="scroll-instruction">Scroll to explore</span><button id="next-scene" aria-label="Next chapter">→</button></footer>
+  </div>
+ </div>
+</main>
+<noscript><section style="padding:3rem;color:white;background:#07101b"><h2>I’ve spent my career building what comes next.</h2><p>From Fikay and visual search to generative video, live AI experiences and Big Screen Hack. Today I’m working on real-time creativity and world models.</p><p>For project, speaking and consulting enquiries, <a style="color:#a9dcff" href="mailto:aaronjonesvideo@gmail.com">email Aaron</a>.</p></section></noscript>
+<script src="js/pioneer-intro.js?v=5c9389321e"></script><script src="js/pioneer-morph.js?v=cd2a0a942b"></script><script src="js/digit-hero.js?v=f1fbafc9bc"></script><script src="js/opening.js?v=d2c592011e"></script><script src="js/collection-data.js?v=8c34e6afab"></script><script src="js/narrative.js?v=b5e0dfccf6"></script><script src="js/story-motion.js?v=fcf0875629"></script><script src="js/project-reader.js?v=dc506a73b0"></script></body></html>

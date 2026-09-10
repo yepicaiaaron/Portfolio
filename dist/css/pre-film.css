@@ -1,0 +1,20 @@
+/* One physical screen. No translucent duplicate panels or binary overlays. */
+.screen-paper{background:transparent!important;background-color:transparent!important;box-shadow:none;border-radius:0;transition:none;perspective:none}
+.matrix-atmosphere,.matrix-image-code,.depth-field,.scene-art:after{display:none!important}
+.pre-film .screen-top,.pre-film .screen-controls{visibility:hidden;pointer-events:none}
+.show-opening{inset:0;perspective:none;transform:none!important}
+.pre-film .show-opening{opacity:1!important}
+.pre-film-stage{position:absolute;inset:0;background:#020406;overflow:hidden;color:#f0f4f6;display:grid;place-items:center}
+.pre-film-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.film-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pre-film-stage .film-credit{position:absolute;top:10%;left:6%;right:6%;text-align:left;max-width:850px}
+.pre-film-stage .film-credit h2{font-size:clamp(36px,5.2vw,82px);line-height:1.09;letter-spacing:-.04em}
+.pre-film-stage .film-credit>span{letter-spacing:0;font-size:clamp(18px,2vw,26px)}
+.film-credit{position:relative;z-index:1;text-align:center;pointer-events:none;text-shadow:0 2px 24px #000;transition:opacity .5s}
+.film-credit>span{font:400 clamp(18px,2vw,30px)/1.4 Inter,Arial,sans-serif;letter-spacing:.12em}
+.film-credit h2{font:500 clamp(38px,6vw,88px)/1.06 Inter,Arial,sans-serif;letter-spacing:-.055em;margin:20px 0}
+.trailer-controls{position:absolute;z-index:3;bottom:6%;left:5%;right:5%;display:flex;gap:20px;justify-content:center}
+.trailer-controls button{font:14px Inter,Arial,sans-serif;background:#081017c9;color:#e5edf1;border:1px solid #afc6d46b;border-radius:0;padding:12px 18px;cursor:pointer}.trailer-controls button:focus-visible{outline:2px solid white;outline-offset:4px}
+.film-caption{position:absolute;bottom:18%;left:5%;right:5%;text-align:center;color:#aec0ca;font-size:12px;z-index:2}
+body.reading .show-opening{height:65vh;min-height:430px;padding:0}body.reading .pre-film-stage{position:relative;width:100%;height:100%;min-height:430px}
+@media(max-width:600px){.film-credit h2{font-size:10vw}.film-credit>span{font-size:18px}.trailer-controls{gap:10px}.trailer-controls button{font-size:12px;padding:10px}}

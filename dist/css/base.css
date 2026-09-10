@@ -1,0 +1,330 @@
+/* Aaron Jones - interactive biography
+   Blue matrix × ultra-high-net-worth capital aesthetic.
+   Ice-holographic digit identity, platinum type, restrained gold. */
+
+
+
+:root {
+  --bg: #050b14;
+  --bg2: #081221;
+  --ink: #edf4fb;
+  --ice: #6fc9ff;
+  --ice2: #a7e0ff;
+  --screen-ink: #f4f1ea;
+  --screen-ice: #a7e0ff;
+  --screen-muted: #9aa5af;
+  --cyan: #2fa8e6;
+  --gold: #c9a85c;
+  --muted: #8fa5b8;
+  --line: #14273b;
+  --max: 1240px;
+  --pad-y: 150px;
+  --pad-x: 44px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--ice); color: var(--bg); }
+
+a { color: var(--ice); text-decoration: none; transition: color 0.25s; }
+a:hover { color: var(--ice2); }
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid #eaff45;
+  outline-offset: 4px;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.serif { font-family: 'Playfair Display', serif; }
+
+/* ---------- Chrome ---------- */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--ice2));
+  transform-origin: 0 50%; transform: scaleX(0);
+  z-index: 60;
+  box-shadow: 0 0 12px rgba(111, 201, 255, 0.55);
+}
+
+#phase-label {
+  position: fixed; top: 18px; right: 22px; z-index: 60;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+  pointer-events: none;
+}
+
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 55;
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 72px;
+  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(5,8,12,.94), rgba(5,8,12,.82));
+  border-bottom: 1px solid rgba(255,255,255,.13);
+  box-shadow: 0 10px 34px rgba(0,0,0,.16);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+.site-nav .brand {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  letter-spacing: 0.18em; color: var(--ink);
+}
+.site-nav .links { display: flex; gap: clamp(16px, 2vw, 30px); margin-right: 0; }
+.site-nav .links a {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #f6f8fb;
+  opacity: 0.82;
+}
+.site-nav .links a:hover { opacity: 1; }
+@media (max-width: 720px) {
+  .site-nav { min-height: 64px; padding: 10px 14px; }
+  .site-nav .links { display: flex; gap: 14px; }
+  .site-nav .links a { display: none; font-size: .62rem; }
+  .site-nav .links a:nth-child(3),
+  .site-nav .links a:last-child { display: inline-block; }
+}
+
+.skip-link {
+  position: absolute; left: -9999px; z-index: 100;
+  background: var(--ice); color: var(--bg); padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.skip-link:focus { left: 12px; top: 12px; }
+
+/* ---------- Hero ---------- */
+/* z-index above the fixed screen-lock backdrop (z-index:0), so hero's own
+   acts always paint over it whenever any part of hero is in view - the
+   backdrop only shows once hero has fully scrolled out (see effects.js). */
+#hero { position: relative; height: 500vh; z-index: 1; }
+
+.hero-sticky {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: flex; align-items: flex-start;
+}
+
+#hero-media {
+  position: absolute; inset: 0; opacity: 0; will-change: opacity, transform, filter;
+  /* Calibrated to the same crop used for the locked-screen backdrop image
+     (assets/screen-zoom.jpg), so the scroll-driven pan-zoom in digit-hero.js
+     lands on a matching frame - see the comment there. */
+  transform-origin: 50% 53%;
+}
+#hero-media video, #hero-media img, #hero-media canvas {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+/* Stacked act layers: all loaded once, switched by opacity - no src
+   swaps, so act cuts never wait on a fetch/decode. */
+.act-layer {
+  position: absolute; inset: 0; opacity: 0;
+  will-change: opacity;
+}
+.act-layer.is-active { opacity: 1; }
+#hero-pan-video { background: #05070a url('../assets/aaron-room-poster.jpg') center / cover no-repeat; }
+
+#hero-glow {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 48% at 50% 42%, rgba(47, 168, 230, 0.24), transparent 70%);
+  mix-blend-mode: screen;
+}
+
+#digit-canvas { position: absolute; inset: 0; }
+
+.hero-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 90% 85% at 50% 45%, transparent 40%, rgba(2, 5, 10, 0.8) 100%);
+}
+
+.hero-grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.13;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.hero-copy {
+  position: relative; z-index: 5; padding: 12vh var(--pad-x) 0; will-change: transform, opacity;
+  max-width: 980px;
+}
+.hero-copy .eyebrow { color: var(--ice); margin-bottom: 18px; }
+.hero-name {
+  font-family: 'Anton', 'Impact', 'Arial Narrow', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: clamp(4rem, 12.2vw, 13rem) !important;
+  line-height: 0.9 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  position: relative;
+  white-space: nowrap;
+}
+.handwritten {
+  position: relative;
+  /* block, not inline-block: the h1 is white-space:nowrap, so an inline
+     box would ride the same line as the name and clip off-screen. But a
+     plain block spans the h1's full width, which would stretch the
+     underline stroke way past the word - width:fit-content gives a box
+     that hugs the text so the ::after underline matches the word. */
+  display: block;
+  width: fit-content;
+  margin-top: 0.34em; margin-left: 1.6em;
+  font-family: 'Homemade Apple', cursive;
+  font-size: clamp(1.7rem, 3.6vw, 3.6rem);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--ice2);
+  transform: rotate(-2deg);
+  text-shadow: 0 0 26px rgba(111, 201, 255, 0.55);
+  pointer-events: none;
+}
+/* Hand-drawn underline stroke - like a signature's flourish. A slight
+   extra tilt and an off-centre fade at each end keep it from reading as
+   a mechanical rule. */
+.handwritten::after {
+  content: '';
+  position: absolute;
+  left: 4%; right: -6%; bottom: -0.16em;
+  height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--ice2) 12%, var(--ice2) 88%, transparent);
+  transform: rotate(-1.2deg);
+  box-shadow: 0 0 18px rgba(111, 201, 255, 0.6);
+  opacity: 0;
+  /* Draws on just after the last handwritten letter lands (letters start
+     at 2.6s + 0.11s/char - ~5.1s for "creative technologist"). */
+  animation: fadein 0.6s ease 5.1s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .handwritten::after { animation: none; opacity: 1; }
+}
+@media (max-width: 720px) {
+  .hero-name { white-space: normal; }
+  .handwritten { right: 0; }
+}
+.hero-copy h1 {
+  font-family: 'Playfair Display', serif; font-weight: 500;
+  font-size: clamp(2.6rem, 7vw, 5.4rem); line-height: 1.04;
+  letter-spacing: -0.01em;
+}
+.hero-copy h1 em { font-style: italic; color: var(--ice); text-shadow: 0 0 34px rgba(111, 201, 255, 0.45); }
+.hero-copy .sub {
+  margin-top: 22px; max-width: 560px; color: var(--muted);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+}
+.hero-scroll-hint {
+  margin-top: 34px; display: inline-flex; align-items: center; gap: 12px;
+  color: var(--muted);
+}
+.hero-scroll-hint::after {
+  content: ''; width: 44px; height: 1px; background: var(--ice);
+  animation: hint 2.2s ease-in-out infinite;
+}
+.nl { display: inline-block; opacity: 0; animation: nl 0.8s cubic-bezier(0.2, 0.65, 0.2, 1) forwards; }
+@keyframes nl { from { opacity: 0; transform: translateY(0.45em) scale(1.06); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+.hl { display: inline-block; opacity: 0; animation: hl 0.34s cubic-bezier(0.3, 1.4, 0.4, 1) forwards; }
+@keyframes hl { from { opacity: 0; transform: rotate(-10deg) translateY(0.2em) scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes fadein { to { opacity: 1; } }
+/* Continuously scroll-driven (see digit-hero.js) rather than class-toggled,
+   so the title beats and return to the cinema image read as a single cut. */
+.hero-dark {
+  position: absolute; inset: 0; z-index: 4; background: #000;
+  opacity: 0; pointer-events: none; will-change: opacity;
+}
+.bridging-1, .bridging-2 {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 0 6vw; pointer-events: none; opacity: 0;
+  font-family: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+  text-transform: uppercase; letter-spacing: 0.01em; color: #fff;
+  font-size: clamp(2.6rem, 6.4vw, 6.2rem); line-height: 1.1;
+  will-change: opacity, transform;
+}
+.bridging-2 em { font-style: normal; color: var(--ice); text-shadow: 0 0 34px rgba(111, 201, 255, 0.45); }
+@keyframes hint { 0%, 100% { transform: scaleX(0.4); opacity: 0.5; } 50% { transform: scaleX(1); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nl, .hl { animation: none; opacity: 1; }
+  .act-layer { transition: none; }
+}
+
+/* ---------- Act three: pan to the screen, then lock ----------
+   Once the pan video ends, the rest of the site is framed as though it
+   plays inside that cinema screen: a fixed backdrop seeded from the pan's
+   final frame, plus a persistent bezel vignette over every section below. */
+.act3 .hero-dark, .act3 .bridging-1, .act3 .bridging-2 {
+  opacity: 0 !important; pointer-events: none !important;
+}
+
+#screen-lock-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  opacity: 0; transition: opacity .28s linear;
+}
+#screen-lock-bg img {
+  width: 100%; height: 100%; object-fit: cover;
+  /* This is the exact last frame of the pan video. JS takes it from
+     projector-white to black as the trailer begins. */
+  filter: brightness(1) saturate(1.02);
+}
+body.screen-locked #screen-lock-bg { opacity: 1; }
+
+#screen-bezel {
+  position: fixed; inset: 0; z-index: 40; pointer-events: none;
+  opacity: 0; transition: opacity .28s linear;
+}
+#screen-bezel::before {
+  content: ''; position: absolute; inset: 14px; border-radius: 14px;
+  border: 1px solid rgba(111, 201, 255, 0.22);
+  box-shadow: inset 0 0 90px rgba(2, 5, 10, 0.22);
+}
+#screen-bezel::after {
+  /* Kept deliberately subtle - a light corner vignette to frame the
+     screen, not a wash that darkens the screen's true colour. */
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 75% at 50% 45%, transparent 65%, rgba(2, 5, 10, 0.16) 100%);
+}
+body.screen-locked #screen-bezel { opacity: 1; }
+body.portfolio-reading #screen-bezel,
+body.portfolio-reading #screen-lock-bg { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #screen-lock-bg, #screen-bezel { transition: none; }
+}
+
+.hero-foot {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px var(--pad-x);
+}
+.socials { display: flex; gap: 26px; }
+.brand-mini {
+  display: flex; flex-direction: column; line-height: 1.05;
+  opacity: 0; transform: translateY(-10px);
+  pointer-events: none;
+}
+body.branded .brand-mini { opacity: 1; transform: none; pointer-events: auto; }
+.bm-name { font-family: 'Anton', 'Impact', sans-serif; font-size: 1.05rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #f6f8fb; }
+.bm-hand { font-family: 'Homemade Apple', cursive; font-size: 0.85rem;
+  color: #8fd8ff; transform: rotate(-3deg); margin-top: 2px; }
+.roll { display: inline-block; overflow: hidden; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+.roll span { display: inline-block; position: relative; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.roll span::after { content: attr(data-txt); position: absolute; left: 0; top: 100%; color: var(--ice); }
+.roll:hover span { transform: translateY(-100%); }
+.menu-link { font-family: 'Homemade Apple', cursive; font-size: 1.4rem; color: var(--ice2);
+  text-shadow: 0 0 18px rgba(111, 201, 255, 0.5); }
+.menu-link:hover { color: #fff; }
+
