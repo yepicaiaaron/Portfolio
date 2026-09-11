@@ -23,13 +23,14 @@ assert.ok(html.includes('css/pioneer.css?v='));
 const elements=[],stage={append(el){elements.push(el)}};
 context.document={querySelector(){return stage},createElement(){return{dataset:{},setAttribute(){}}}};
 vm.runInNewContext(fs.readFileSync('dist/js/narrative.js','utf8'),context);
-assert.equal(elements.length,10);
-assert.equal(new Set(elements.map(el=>el.id)).size,10);
+assert.equal(elements.length,12);
+assert.equal(new Set(elements.map(el=>el.id)).size,12);
 for(const el of elements){
  for(const [,id] of el.innerHTML.matchAll(/data-project="([^"]+)"/g))assert(records.some(r=>r.id===id),'Missing project '+id);
  for(const [,src] of el.innerHTML.matchAll(/src="([^"]+)"/g))if(!src.startsWith('https://'))assert(fs.existsSync('dist/'+src),'Missing chapter image '+src);
  assert(!/<br>\S/.test(el.innerHTML),'Mobile line break removes word spacing');
 }
 assert(!elements[0].innerHTML.includes('I’ve spent my career'),'Cinema repeats the introduction');
-assert(elements[0].innerHTML.includes('mailto:'));
-console.log('15 complete project records, 5 video references, 10 connected chapters and all chapter links/assets passed. Playback not browser-tested.');
+assert(elements[0].innerHTML.includes('data-booking'));
+assert(elements[0].innerHTML.includes('https://calendar.app.google/pZkjBD1BnG83RQxi7'));
+console.log('15 complete project records, 5 video references, 12 connected chapters and all chapter links/assets passed.');

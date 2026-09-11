@@ -279,23 +279,52 @@
   if (audienceVid && panVid && heroEl) {
     const sticky = document.querySelector('.hero-sticky');
     let pendingPanProgress = 0;
-    let lastPanTime = -1;
+    let active = true;
+    let retry = 0;
+    const mediaLoader = window.PortfolioMedia;
+    let rawPosition = 0;
+    let audienceWanted = true;
+    let audienceStarted = false;
+    let audiencePlayPending = false;
+
+    function playAudience() {
+      if (!audienceStarted || !active || !audienceWanted || audiencePlayPending || reduceMotion || document.hidden) return;
+      mediaLoader.load(audienceVid);
+      audiencePlayPending = true;
+      audienceVid.play().catch(() => {}).finally(() => { audiencePlayPending = false; });
+    }
 
     function scrubPan(t) {
       pendingPanProgress = Math.max(0, Math.min(1, t));
-      if (!Number.isFinite(panVid.duration) || panVid.duration <= 0 || panVid.readyState < 1 || panVid.seeking) return;
+      if (!active || document.hidden || !Number.isFinite(panVid.duration) || panVid.duration <= 0 || panVid.readyState < 2 || panVid.seeking) return;
       const target = pendingPanProgress * Math.max(0, panVid.duration - 0.025);
-      if (Math.abs(target - lastPanTime) < 0.012) return;
-      lastPanTime = target;
-      try { panVid.currentTime = target; } catch (_) {}
+      if (Math.abs(target - panVid.currentTime) < 0.018) return;
+      const ranges = panVid.seekable;
+      if (!ranges.length || target > ranges.end(ranges.length - 1)) {
+        clearTimeout(retry);
+        retry = setTimeout(() => scrubPan(pendingPanProgress), 100);
+        return;
+      }
+      // Track the actual decoded playhead, not a requested time that may fail.
+      try { panVid.currentTime = target; } catch (_) {
+        clearTimeout(retry);
+        retry = setTimeout(() => scrubPan(pendingPanProgress), 100);
+      }
     }
     panVid.pause();
-    panVid.load();
-    panVid.addEventListener('loadedmetadata', () => scrubPan(pendingPanProgress), { once: true });
-    // Let each camera frame decode before scheduling the next seek.
-    panVid.addEventListener('seeked', () => scrubPan(pendingPanProgress));
-    panVid.addEventListener('loadeddata', () => scrubPan(pendingPanProgress));
-    audienceVid.play().catch(() => {});
+    for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'progress', 'seeked'])
+      panVid.addEventListener(event, () => scrubPan(pendingPanProgress));
+    // First paint uses the matching poster. The small face loop follows at idle.
+    function startAudience() { audienceStarted = true; playAudience(); }
+    if ('requestIdleCallback' in window) requestIdleCallback(startAudience, { timeout: 1200 });
+    else setTimeout(startAudience, 300);
+    for (const event of ['pointerdown', 'keydown']) document.addEventListener(event, startAudience, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { audienceVid.pause(); clearTimeout(retry); }
+      else updateCamera(window.scrollY);
+    });
+    window.addEventListener('pageshow', () => updateCamera(window.scrollY));
+    window.addEventListener('resize', () => updateCamera(window.scrollY));
     window.__heroActiveLayer = audienceVid;
 
     const DISSOLVE_START = 0.44;
@@ -308,9 +337,21 @@
       return t * t * (3 - 2 * t);
     }
 
-    onSmoothScroll((y) => {
+    function updateCamera(y) {
       const total = heroEl.offsetHeight - window.innerHeight;
       const rawProg = total > 0 ? Math.max(0, Math.min(1, y / total)) : 0;
+      rawPosition = total > 0 ? y / total : 0;
+      active = rawPosition < 1.12;
+      if (!active) {
+        clearTimeout(retry);
+        if (audienceVid.hasAttribute('src')) mediaLoader.release(audienceVid);
+        if (panVid.hasAttribute('src') || panVid.dataset.loading) { mediaLoader.release(panVid); delete panVid.dataset.loading; }
+        return;
+      }
+      if (rawProg >= .60 && !reduceMotion && !document.hidden && !panVid.dataset.loading) {
+        panVid.dataset.loading = 'true';
+        mediaLoader.loadSeekable(panVid).then(() => scrubPan(pendingPanProgress));
+      }
       const prog = window.DigitStory ? window.DigitStory.timeline(rawProg) : rawProg;
       const dissolve = smooth(DISSOLVE_START, DISSOLVE_END, prog);
       audienceVid.style.opacity = (1 - dissolve).toFixed(4);
@@ -319,11 +360,15 @@
       window.__heroActiveLayer = dissolve < .5 ? audienceVid : panVid;
 
       scrubPan((prog - PAN_START) / (PAN_END - PAN_START));
-      if (dissolve > .995) audienceVid.pause();
-      else if (audienceVid.paused) audienceVid.play().catch(() => {});
+      // The face is fully replaced by the shared digit field in these beats.
+      // Stop decoding it while the research/creative shapes are in view.
+      audienceWanted = dissolve <= .995 && (rawProg < .24 || rawProg >= .60);
+      if (!audienceWanted) audienceVid.pause();
+      else if (audienceVid.paused) playAudience();
 
       document.body.classList.toggle('screen-locked', prog >= .94);
-    });
+    }
+    onSmoothScroll(updateCamera);
   }
 
   /* ---------- Opening trailer ----------

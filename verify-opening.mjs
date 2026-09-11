@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const html=fs.readFileSync('dist/index.html','utf8');
-for(const asset of ['aaron-room.mp4','aaron-pan-to-screen.mp4']){
- assert(html.includes('assets/'+asset),`Original cinema asset missing: ${asset}`);
- assert(fs.statSync('dist/assets/'+asset).size>100000,`Empty cinema asset: ${asset}`);
+for(const asset of ['audience-desktop.mp4','audience-mobile.mp4','turn-desktop.mp4','turn-mobile.mp4']){
+ assert(html.includes('assets/optimised/'+asset),`Optimised cinema asset missing: ${asset}`);
+ assert(fs.statSync('dist/assets/optimised/'+asset).size>100000,`Empty cinema asset: ${asset}`);
 }
+assert(!html.includes('<source src="assets/aaron-'),'Unoptimised cinema assets are eagerly loaded');
 for(const obsolete of ['cinematic-intro','story-depth','cinema','collection','case-stories','digit-story','digit-morph'])assert(!html.includes('src="js/'+obsolete+'.js'),'Obsolete effect is still loaded: '+obsolete);
 assert(!html.includes('href="https://yepic.webflow.io/case-studies/'),'Case study navigation leaves the website');
 const motion=fs.readFileSync('dist/js/story-motion.js','utf8');

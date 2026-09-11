@@ -1,5 +1,6 @@
 (()=>{
  const records=window.portfolioCollection,{esc}=window.PortfolioNarrative;
+ records.forEach(item=>item.images?.forEach(pic=>pic.src=window.PortfolioMedia.image(pic.src)));
  const dialog=document.createElement('dialog');dialog.className='project-reader';dialog.setAttribute('aria-labelledby','reader-title');document.body.append(dialog);
  let opener=null,oldHash='',oldOverflow='',mode='',category='All';
  const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text)el.textContent=text;return el};

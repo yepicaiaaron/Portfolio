@@ -1,63 +1,57 @@
-/* One persistent digit field: portrait -> Build -> See -> live research
-   -> cinema -> original portrait. The camera timing is deliberately untouched. */
+/* Persistent particles: Aaron -> crystal -> research -> cinema. Camera timing is unchanged. */
 (()=>{
  const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
  const lerp=(a,b,t)=>a+(b-a)*t,hash=k=>{const v=Math.sin(k*127.1+311.7)*43758.5453;return v-Math.floor(v)};
  const maps={};
- function sample(canvas){const c=canvas.getContext('2d',{willReadFrequently:true}),d=c.getImageData(0,0,canvas.width,canvas.height).data,pts=[];for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){const i=(y*canvas.width+x)*4,b=(d[i]*.2126+d[i+1]*.7152+d[i+2]*.0722)/255*d[i+3]/255;if(b>.22)pts.push([x/canvas.width,y/canvas.height,b])}return pts}
- function word(value){const c=document.createElement('canvas');c.width=440;c.height=140;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.font='bold 88px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(value,220,70,420);return sample(c)}
- maps.build=word('Build.');maps.see=word('See.');
- const cinema=new Image();cinema.onload=()=>{const c=document.createElement('canvas');c.width=256;c.height=256;c.getContext('2d').drawImage(cinema,0,0,256,256);maps.cinema=sample(c)};cinema.src='assets/bsh-shared-imagination.png';
+ function sample(c){const d=c.getContext('2d',{willReadFrequently:true}).getImageData(0,0,c.width,c.height).data,pts=[];for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4,b=(d[i]*.2126+d[i+1]*.7152+d[i+2]*.0722)/255*d[i+3]/255;if(b>.22)pts.push([x/c.width,y/c.height,b])}return pts}
+ const word=document.createElement('canvas');word.width=440;word.height=140;const wc=word.getContext('2d');wc.fillStyle='#fff';wc.font='bold 88px Arial';wc.textAlign='center';wc.textBaseline='middle';wc.fillText('See.',220,70);maps.see=sample(word);
+ const cinema=new Image();cinema.onload=()=>{const c=document.createElement('canvas');c.width=c.height=256;c.getContext('2d').drawImage(cinema,0,0,256,256);maps.cinema=sample(c)};
  function sprite(name,k){const a=maps[name];return a?.length?a[Math.floor(hash(k+9)*a.length)]:[hash(k),hash(k+1),.1]}
-
- // Public Soul AI Lab research demonstration; credited separately from Aaron's
- // own LiveKit integration. Only this decoded video supplies the moving face.
- const video=document.createElement('video');video.id='research-video-source';video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;video.preload='auto';video.hidden=true;video.setAttribute('aria-hidden','true');video.setAttribute('playsinline','');video.poster='assets/research-talking-head-poster.jpg';video.src='assets/research-talking-head.mp4';document.body.append(video);
- const videoCanvas=document.createElement('canvas');videoCanvas.width=128;videoCanvas.height=128;const videoContext=videoCanvas.getContext('2d',{willReadFrequently:true});
- let videoPixels=null,lastVideoTime=-1,lastSample=0,wantsVideo=false,playRequested=false;
- const fallback=new Image();fallback.onload=()=>{if(videoPixels)return;videoContext.drawImage(fallback,0,0,128,128);videoPixels=videoContext.getImageData(0,0,128,128).data};fallback.src=video.poster;
- function playVideo(){if(wantsVideo&&video.paused&&!playRequested){playRequested=true;video.play()?.catch(()=>{playRequested=false})}}
- function updateVideo(p,now){
-  const active=p>=.34&&p<.60&&!document.hidden;
-  if(active!==wantsVideo){wantsVideo=active;playRequested=false;if(active)playVideo();else video.pause()}
-  if(!active||video.readyState<2||video.currentTime===lastVideoTime||now-lastSample<33)return;
-  try{videoContext.drawImage(video,0,0,128,128);videoPixels=videoContext.getImageData(0,0,128,128).data;lastVideoTime=video.currentTime;lastSample=now}catch(_){}
+ function raster(id,src,poster,w,h){
+  const video=document.createElement('video');Object.assign(video,{id,muted:true,defaultMuted:true,loop:true,playsInline:true,preload:'none',hidden:true});video.dataset.src=src;video.setAttribute('aria-hidden','true');document.body.append(video);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true}),still=new Image();
+  let pixels=null,last=-1,lastSample=0,playing=false,active=false;
+  const draw=source=>{const sw=source.videoWidth||source.naturalWidth,sh=source.videoHeight||source.naturalHeight,scale=Math.max(w/sw,h/sh);ctx.drawImage(source,(w-sw*scale)/2,(h-sh*scale)/2,sw*scale,sh*scale);pixels=ctx.getImageData(0,0,w,h).data};
+  still.onload=()=>{if(!pixels)draw(still)};
+  const play=()=>{if(active&&video.paused&&!playing){playing=true;video.play()?.catch(()=>{playing=false})}};video.addEventListener('canplay',play);
+  function update(load,run,now){active=run&&!document.hidden&&!window.PortfolioMedia.lowMotion.matches;if(load){if(!still.src)still.src=poster;if(!window.PortfolioMedia.lowMotion.matches)window.PortfolioMedia.load(video)}else if(video.hasAttribute('src')){window.PortfolioMedia.release(video);last=-1;playing=false}
+   if(active)play();else{video.pause();playing=false}if(active&&video.readyState>=2&&video.currentTime!==last&&now-lastSample>45){draw(video);last=video.currentTime;lastSample=now}
+  }
+  return {video,still,update,suspend(){active=false;playing=false;last=-1;window.PortfolioMedia.release(video)},light(u,v){if(!pixels)return 0;const i=(Math.min(h-1,Math.floor(v*h))*w+Math.min(w-1,Math.floor(u*w)))*4;return Math.pow(Math.max(0,(pixels[i]*.2126+pixels[i+1]*.7152+pixels[i+2]*.0722)/255-.025),.7)}};
  }
- video.addEventListener('canplay',playVideo);
- for(const name of ['pointerdown','keydown'])document.addEventListener(name,()=>{playRequested=false;playVideo()},{passive:true});
- document.addEventListener('visibilitychange',()=>{if(document.hidden){video.pause();wantsVideo=false;playRequested=false}});
- function researchPoint(k,cols,rows,base){
-  const count=cols*rows,side=Math.max(28,Math.round(Math.sqrt(Math.ceil(count/6)))),height=Math.ceil(Math.ceil(count/6)/side),cell=Math.floor(k/6);
-  const u=(cell%side+.5)/side,v=(Math.floor(cell/side)+.5)/height;
-  let b=0;
-  if(k%6===0&&videoPixels){const index=(Math.min(127,Math.floor(v*128))*128+Math.min(127,Math.floor(u*128)))*4;const luminance=(videoPixels[index]*.2126+videoPixels[index+1]*.7152+videoPixels[index+2]*.0722)/255;b=Math.pow(Math.max(0,(luminance-.055)/.945),.72)*.95}
-  // Keep a square face, including on tall phones; no image stretching.
-  const mobile=innerWidth<700,size=mobile?Math.min(innerWidth*.76,innerHeight*.29):Math.min(innerWidth*.41,innerHeight*.58),cx=mobile?.5:.755,cy=mobile?.62:.42;
-  return[cx+(u-.5)*size/innerWidth,cy+(v-.5)*size/innerHeight,b];
- }
+ const crystal=raster('crystal-video-source','assets/optimised/crystal-future.mp4','assets/optimised/crystal-future.webp',160,146);
+ // Aaron's own footage replaces the licensed third-party research demo.
+ const research=raster('research-video-source','assets/optimised/audience-mobile.mp4','assets/optimised/aaron-portrait.webp',128,128);
+ const revealButton=document.createElement('button');revealButton.className='crystal-reveal';revealButton.type='button';revealButton.setAttribute('aria-label','Reveal the future inside the crystal ball');revealButton.setAttribute('aria-pressed','false');revealButton.innerHTML='<span>Hover or tap to look inside</span>';revealButton.hidden=true;document.querySelector('.hero-sticky').append(revealButton);
+ let pinned=false,reveal=0,crystalWeight=0,rect=null;
+ revealButton.onclick=()=>{pinned=!pinned;revealButton.setAttribute('aria-pressed',String(pinned))};
+ function crystalRect(){const mobile=innerWidth<700,w=mobile?Math.min(innerWidth*.92,innerHeight*.285*576/528):Math.min(innerWidth*.48,innerHeight*.64*576/528),h=w*528/576;return{x:(mobile?.5:.755)*innerWidth-w/2,y:(mobile?.62:.46)*innerHeight-h/2,w,h}}
+ function rasterPoint(source,k,cols,rows,box,gain=1){const cells=Math.ceil(cols*rows/3),nx=Math.round(Math.sqrt(cells*box.w/box.h)),ny=Math.ceil(cells/nx),cell=Math.floor(k/3),u=(cell%nx+.5)/nx,v=(Math.floor(cell/nx)+.5)/ny;return[(box.x+u*box.w)/innerWidth,(box.y+v*box.h)/innerHeight,k%3===0?Math.min(1,source.light(u,v)*gain):.018]}
  let xs=new Float32Array(),ys=new Float32Array();const times=[.12,.24,.37,.50,.60],ends=[.20,.32,.45,.58,.65];
  function phase(p){let scene=0,t=0;for(let i=0;i<times.length;i++)if(p>=times[i]){scene=i;t=smooth(times[i],ends[i],p)}return{scene,t}}
- function target(scene,k,cols,rows,p,base){
+ function target(scene,k,cols,rows,base){
   if(scene===0||scene===5)return[(k%cols+.5)/cols,(Math.floor(k/cols)+.5)/rows,base];
-  if(scene===3)return researchPoint(k,cols,rows,base);
-  let x,y,b;
-  if(scene===1||scene===2){const q=sprite(scene===1?'build':'see',k);x=q[0];y=.22+q[1]*.42;b=q[2]*.8;if(k%5===0){x=hash(k+41);y=hash(k+73);b=.07}}
-  else{
-   // The same particles form the whole workbench-to-cinema illustration.
-   // Preserve its square proportions rather than stretching the logo.
-   const q=sprite('cinema',k),mobile=innerWidth<700;
-   const size=mobile?Math.min(innerWidth*.88,innerHeight*.29):Math.min(innerWidth*.46,innerHeight*.82);
-   const cx=mobile?.5:.755,cy=mobile?.735:.49;
-   return[cx+(q[0]-.5)*size/innerWidth,cy+(q[1]-.5)*size/innerHeight,q[2]*.95];
-  }
-  if(innerWidth<700)return[x*.9+.05,y*.30+.52,b];return[x*.46+.51,y*.66+.13,b];
+  if(scene===1)return rasterPoint(crystal,k,cols,rows,rect,1.3);
+  if(scene===3){const mobile=innerWidth<700,s=mobile?Math.min(innerWidth*.76,innerHeight*.29):Math.min(innerWidth*.41,innerHeight*.58);return rasterPoint(research,k,cols,rows,{x:(mobile?.5:.755)*innerWidth-s/2,y:(mobile?.62:.42)*innerHeight-s/2,w:s,h:s})}
+  if(scene===2){const q=sprite('see',k),x=q[0],y=.22+q[1]*.42;return innerWidth<700?[x*.9+.05,y*.30+.52,q[2]*.8]:[x*.46+.51,y*.66+.13,q[2]*.8]}
+  const q=sprite('cinema',k),mobile=innerWidth<700,size=mobile?Math.min(innerWidth*.88,innerHeight*.29):Math.min(innerWidth*.46,innerHeight*.82);return[(mobile?.5:.755)+(q[0]-.5)*size/innerWidth,(mobile?.735:.49)+(q[1]-.5)*size/innerHeight,q[2]*.95];
  }
- function apply(bright,cols,rows,p,now=performance.now()){
-  updateVideo(p,now);
+ function apply(bright,cols,rows,p,now){
+  crystal.update(p>=.09&&p<.34,p>=.12&&p<.33,now);research.update(p>=.29&&p<.60,p>=.34&&p<.60,now);if(p>=.43&&!cinema.src)cinema.src='assets/optimised/cinema-map.webp';rect=crystalRect();
+  const pointer=window.DigitStory.pointer(),cx=rect.x+rect.w*.5,cy=rect.y+rect.h*.493,r=rect.w*.25;
+  crystalWeight=smooth(.12,.20,p)*(1-smooth(.24,.32,p));const available=p>=.195&&p<.255;
+  revealButton.hidden=!available;Object.assign(revealButton.style,{left:(cx-r)+'px',top:(cy-r)+'px',width:r*2+'px',height:r*2+'px'});
+  if(!available){pinned=false;revealButton.setAttribute('aria-pressed','false')}
+  const hovered=Math.hypot(pointer.x*innerWidth-cx,pointer.y*innerHeight-cy)<r;
+  reveal+=((available&&(hovered||pinned)?1:0)-reveal)*.16;
   if(xs.length!==bright.length){xs=new Float32Array(bright.length);ys=new Float32Array(bright.length)}
-  const{scene,t}=phase(p),amount=smooth(.12,.20,p)*(1-smooth(.60,.65,p)),pointer=window.DigitStory.pointer();
-  for(let k=0;k<bright.length;k++){const a=target(scene,k,cols,rows,p,bright[k]),b=target(scene+1,k,cols,rows,p,bright[k]);let x=lerp(a[0],b[0],t),y=lerp(a[1],b[1],t);const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy),force=Math.max(0,1-d/.16)*.012*amount;x+=dx/Math.max(.001,d)*force;y+=dy/Math.max(.001,d)*force;xs[k]=x;ys[k]=y;bright[k]=lerp(a[2],b[2],t)}
+  const{scene,t}=phase(p),amount=smooth(.12,.20,p)*(1-smooth(.60,.65,p));
+  for(let k=0;k<bright.length;k++){const a=target(scene,k,cols,rows,bright[k]),b=target(scene+1,k,cols,rows,bright[k]);let x=lerp(a[0],b[0],t),y=lerp(a[1],b[1],t),light=lerp(a[2],b[2],t);const dx=x-pointer.x,dy=(y-pointer.y)*innerHeight/innerWidth,d=Math.hypot(dx,dy),force=Math.max(0,1-d/.12)*.009*amount;
+   const orbDistance=Math.hypot(x*innerWidth-cx,y*innerHeight-cy);if(orbDistance<r){light*=1-reveal*crystalWeight;x+=(x-cx/innerWidth)*reveal*.045;y+=(y-cy/innerHeight)*reveal*.045}
+   x+=dx/Math.max(.001,d)*force;y+=dy/Math.max(.001,d)*force;xs[k]=x;ys[k]=y;bright[k]=light;
+  }
   return{xs,ys,amount,codeWeight:smooth(.37,.45,p)*(1-smooth(.50,.58,p))};
  }
- window.DigitMorph={apply,phase,ready:()=>Object.keys(maps)};
+ function drawReveal(ctx){if(reveal<.005||!rect)return;const source=crystal.video.readyState>=2?crystal.video:crystal.still;if(!(source.videoWidth||source.naturalWidth))return;ctx.save();ctx.globalAlpha=reveal*crystalWeight;ctx.beginPath();ctx.arc(rect.x+rect.w*.5,rect.y+rect.h*.493,rect.w*.25,0,Math.PI*2);ctx.clip();ctx.drawImage(source,rect.x,rect.y,rect.w,rect.h);ctx.restore()}
+ window.DigitMorph={apply,phase,drawReveal,ready:()=>Object.keys(maps),suspend(){crystal.suspend();research.suspend();revealButton.hidden=true;reveal=0}};
 })();

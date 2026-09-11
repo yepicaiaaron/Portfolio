@@ -18,6 +18,8 @@
   paper.dataset.theme=reading?'light':scenes[current].dataset.theme;
   scenes.forEach((scene,i)=>{
    const active=reading||i===current;scene.classList.toggle('active',active);scene.inert=!active;scene.setAttribute('aria-hidden',String(!active));
+   // Stacked scenes share the viewport, so native lazy-loading alone loads them all.
+   if(reading||((eased>=start-innerHeight)&&Math.abs(i-current)<=1))window.PortfolioMedia?.hydrate(scene);
    if(!active){scene.style.opacity='0';return}
    const enter=smooth(0,.18,local),exit=current===units-1?0:smooth(.87,1,local);scene.style.opacity=reading?'1':String(enter*(1-exit));
    scene.querySelectorAll('.layer').forEach((el,k)=>{

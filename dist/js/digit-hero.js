@@ -46,7 +46,7 @@
 
   let n = 0;
   let bright, digits, ticks, jitterX, jitterY, cellDX, cellDY, cellDist;
-  let portraitBrightness;
+  let portraitBrightness, luminance;
 
   // --- Colour ramp (ice matrix theme) ---
   const stops = [
@@ -93,6 +93,7 @@
     n = COLS * ROWS;
     bright = new Float32Array(n);
     portraitBrightness = new Float32Array(n);
+    luminance = new Float32Array(n);
     digits = new Uint8Array(n);
     ticks = new Float32Array(n);
     jitterX = new Float32Array(n);
@@ -116,7 +117,8 @@
   }
 
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Bound the backing store even on 4K/Retina displays (~1.8M pixels max).
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(1800000 / (innerWidth * innerHeight)));
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
     canvas.style.width = window.innerWidth + 'px';
@@ -198,7 +200,7 @@
     } catch (e) { generativeSample(now); return; }
     const data = octx.getImageData(0, 0, COLS, ROWS).data;
     let min = 1, max = 0;
-    const lum = new Float32Array(n);
+    const lum = luminance;
     for (let k = 0, q = 0; k < n; k++, q += 4) {
       const v = 0.2126 * data[q] / 255 + 0.7152 * data[q + 1] / 255 + 0.0722 * data[q + 2] / 255;
       lum[k] = v;
@@ -253,6 +255,8 @@
   }
 
   function frame(now) {
+    animationFrame = 0;
+    if (document.hidden || !heroVisible) { window.DigitMorph?.suspend(); return; }
     readScroll();
     const dtF = Math.min(0.05, (now - lastFrameT) / 1000 || 0.016);
     lastFrameT = now;
@@ -350,7 +354,7 @@
 
     if (digitPresence < 0.01) {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      requestAnimationFrame(frame);
+      if (pRawS !== pRaw) schedule();
       return;
     }
 
@@ -361,7 +365,7 @@
     // thousands of glyphs is the biggest per-frame cost in the hero.
     const playheadMoving = Math.abs(pS - lastPaintP) > 0.0004;
     paintTick = !paintTick;
-    if (!playheadMoving && paintTick) { requestAnimationFrame(frame); return; }
+    if (!playheadMoving && paintTick) { schedule(); return; }
 
     // Keep the live portrait luminance separate from the transformed frame.
     bright.set(portraitBrightness);
@@ -374,6 +378,7 @@
     lastPaintP = pS;
 
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    window.DigitMorph?.drawReveal(ctx);
     ctx.font = '600 ' + fontSize + 'px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -421,11 +426,21 @@
       ctx.fillText(glyph, x, y);
     }
 
-    requestAnimationFrame(frame);
+    schedule();
   }
 
-  window.addEventListener('resize', () => { resize(); layoutCells(); });
+  let animationFrame = 0, heroVisible = true;
+  function schedule() { if (!animationFrame && heroVisible && !document.hidden) animationFrame = requestAnimationFrame(frame); }
+  new IntersectionObserver(entries => {
+    heroVisible = entries[0].isIntersecting;
+    if (!heroVisible) { cancelAnimationFrame(animationFrame); animationFrame=0; window.DigitMorph?.suspend(); }
+    else schedule();
+  }).observe(hero);
+  document.addEventListener('visibilitychange', schedule);
+  window.addEventListener('pageshow', schedule);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', () => { resize(); layoutCells(); schedule(); });
   resize();
   layoutCells();
-  requestAnimationFrame(frame);
+  schedule();
 })();

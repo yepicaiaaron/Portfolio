@@ -135,7 +135,7 @@ a:hover { color: var(--ice2); }
   will-change: opacity;
 }
 .act-layer.is-active { opacity: 1; }
-#hero-pan-video { background: #05070a url('../assets/aaron-room-poster.jpg') center / cover no-repeat; }
+#hero-pan-video { background: #05070a url('../assets/optimised/aaron-room-poster.webp') center / cover no-repeat; }
 
 #hero-glow {
   position: absolute; inset: 0; opacity: 0; pointer-events: none;
