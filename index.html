@@ -18,6 +18,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0b10'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Georgia,serif' fill='%23ff5c38'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://v3b.fal.media" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0b0b10;--ink:#f5f3ee;--ember:#ff5c38;--ember2:#ff7a5c;--muted:#a8a39a;--line:#23232c;--panel:#0e0e15}
@@ -34,10 +35,7 @@
     padding:10px 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
   .skip:focus{top:16px}
 
-  .progbar{position:fixed;top:0;left:0;height:2px;background:var(--ember);z-index:70;width:0;box-shadow:0 0 14px var(--ember)}
-  .phase-label{position:absolute;top:84px;left:44px;z-index:12;font-family:"JetBrains Mono",monospace;
-    font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);pointer-events:none}
-  .phase-label b{color:var(--ember);font-weight:600}
+  .progbar{position:fixed;top:0;left:0;height:3px;background:var(--ember);z-index:70;width:0;box-shadow:0 0 14px var(--ember)}
 
   .nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:space-between;
     align-items:center;padding:18px 36px;background:linear-gradient(to bottom,rgba(5,5,10,.78),transparent);
@@ -159,7 +157,6 @@
     .nav .links.is-open{display:flex}
     .nav .links a{padding:14px 20px;opacity:1}
     .copy{padding:80px 22px 28px}
-    .phase-label{display:none}
     section.s{padding:90px 22px}
     .cta{padding:80px 22px}
     footer{padding:32px 22px}
@@ -168,7 +165,7 @@
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     .hero{height:100vh}
-    canvas.dig,.hint,.phase-label,.progbar,.grain{display:none}
+    canvas.dig,.hint,.progbar,.grain{display:none}
     video.hv{opacity:1!important;filter:none!important;transform:none!important}
     .kicker,.title,.sub{opacity:1;transform:none;transition:none}
     .kicker .dot,.hint .bar::after{animation:none}
@@ -200,13 +197,12 @@
     <div class="v-wrap">
       <video class="hv" id="hv" crossorigin="anonymous"
              src="https://v3b.fal.media/files/b/0a966513/bLlGLqc42nAPdHZndES9Y_output.mp4"
-             muted loop playsinline preload="metadata" aria-hidden="true"></video>
+             muted loop playsinline preload="auto" aria-hidden="true"></video>
     </div>
     <div class="warmglow" id="warm" aria-hidden="true"></div>
     <canvas class="dig" id="hc" aria-hidden="true"></canvas>
     <div class="vignette" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
-    <div class="phase-label" id="phase" aria-hidden="true"><b>01</b> — Rain</div>
     <div class="copy">
       <div>
         <div class="kicker" id="kick"><span class="dot"></span>Aaron Jones BEM · Creative Technologist</div>
@@ -214,7 +210,7 @@
       </div>
       <div class="foot">
         <p class="sub" id="hsub">I build products where AI stops feeling like software and starts feeling like presence. Former founder (Yepic AI). Now shaping the next wave of expressive, multimodal interfaces.</p>
-        <div class="meta"><div><b>01</b> — Scroll</div><div>Code → Pixels</div><div>Aaron Jones · 2026</div></div>
+        <div class="meta"><div id="phase"><b>01</b> — Rain</div><div>Code → Pixels</div><div>Aaron Jones · 2026</div></div>
       </div>
       <div class="hint" id="hint"><span class="bar"></span>Scroll to begin</div>
     </div>
@@ -339,7 +335,7 @@
   <style>
     .hero{height:auto;min-height:100vh}
     video.hv,.kicker,.title,.sub{opacity:1;transform:none}
-    canvas.dig,.hint,.phase-label,.progbar{display:none}
+    canvas.dig,.hint,.progbar{display:none}
   </style>
 </noscript>
 
@@ -379,6 +375,7 @@
   });
 
   const playVideo = () => video.play().catch(() => {});
+  video.addEventListener('canplay', playVideo);
   playVideo();
 
   setTimeout(() => {
@@ -536,8 +533,9 @@
 
     const dissolveStart = 0.55;
     const dissolveEnd   = 0.92;
-    const videoReveal   = ss(0.52, 0.90, p);
-    const digitAlpha    = 1 - ss(dissolveStart, 1.0, p);
+    const canShowVideo  = video.readyState >= 2 && video.videoWidth > 0;
+    const videoReveal   = canShowVideo ? ss(0.52, 0.90, p) : 0;
+    const digitAlpha    = canShowVideo ? (1 - ss(dissolveStart, 1.0, p)) : 1;
 
     const blur  = (1 - videoReveal) * 12;
     const scale = 1.0 + (1 - videoReveal) * 0.04;
