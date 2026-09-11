@@ -4,27 +4,51 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aaron Jones — Creative Technologist</title>
+<meta name="description" content="Aaron Jones BEM is a creative technologist and founder working at the intersection of AI, media and real-time systems. Advisory, talks, and selected work.">
+<meta name="author" content="Aaron Jones">
+<meta name="theme-color" content="#0b0b10">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Aaron Jones — Creative Technologist">
+<meta property="og:description" content="I build products where AI stops feeling like software and starts feeling like presence.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Aaron Jones — Creative Technologist">
+<meta name="twitter:description" content="I build products where AI stops feeling like software and starts feeling like presence.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0b10'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Georgia,serif' fill='%23ff5c38'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0b0b10;--ink:#f5f3ee;--ember:#ff5c38;--ember2:#ff7a5c;--muted:#a8a39a;--line:#23232c}
+  :root{--bg:#0b0b10;--ink:#f5f3ee;--ember:#ff5c38;--ember2:#ff7a5c;--muted:#a8a39a;--line:#23232c;--panel:#0e0e15}
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
     font-family:"Inter",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  body{overflow-x:hidden}
   a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px}
 
-  .progbar{position:fixed;top:0;left:0;height:2px;background:var(--ember);z-index:60;width:0;box-shadow:0 0 14px var(--ember)}
-  .phase-label{position:fixed;top:18px;right:22px;z-index:50;font-family:"JetBrains Mono",monospace;
-    font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .skip{position:absolute;left:16px;top:-48px;z-index:80;background:var(--ember);color:#0b0b10;
+    padding:10px 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+  .skip:focus{top:16px}
+
+  .progbar{position:fixed;top:0;left:0;height:2px;background:var(--ember);z-index:70;width:0;box-shadow:0 0 14px var(--ember)}
+  .phase-label{position:absolute;top:84px;left:44px;z-index:12;font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);pointer-events:none}
   .phase-label b{color:var(--ember);font-weight:600}
 
-  .nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;
-    align-items:center;padding:20px 36px;mix-blend-mode:difference;pointer-events:none}
-  .nav a{pointer-events:auto}
-  .nav .mark{font-family:"Playfair Display",serif;font-style:italic;font-size:20px;color:#fff}
-  .nav .links{display:flex;gap:28px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff}
+  .nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:space-between;
+    align-items:center;padding:18px 36px;background:linear-gradient(to bottom,rgba(5,5,10,.78),transparent);
+    transition:background .25s,border-color .25s,backdrop-filter .25s}
+  .nav.is-solid{background:rgba(11,11,16,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .nav .mark{font-family:"Playfair Display",serif;font-style:italic;font-size:20px}
+  .nav .links{display:flex;gap:28px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;align-items:center}
   .nav .links a{opacity:.85}.nav .links a:hover{opacity:1;color:var(--ember)}
+  .menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--ink);padding:8px 12px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+  .menu-btn:hover{border-color:var(--ember);color:var(--ember)}
 
   .hero{position:relative;height:600vh;background:#000}
   .stick{position:sticky;top:0;height:100vh;overflow:hidden;background:#05050a}
@@ -33,7 +57,7 @@
     opacity:0;will-change:filter,transform,opacity}
   .warmglow{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;
     background:radial-gradient(ellipse at 50% 45%,rgba(255,92,56,.25) 0%,transparent 55%);mix-blend-mode:screen}
-  canvas.dig{position:absolute;inset:0;width:100%;height:100%;z-index:4}
+  canvas.dig{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
   .vignette{position:absolute;inset:0;z-index:5;pointer-events:none;
     background:radial-gradient(ellipse at 50% 42%,transparent 45%,rgba(5,5,10,.8) 100%)}
   .grain{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:.12;mix-blend-mode:overlay;
@@ -64,6 +88,7 @@
   .hint .bar::after{content:"";position:absolute;inset:0;background:var(--ember);animation:sweep 2.4s ease-in-out infinite}
   @keyframes sweep{0%{transform:translateX(-100%)}60%{transform:translateX(100%)}100%{transform:translateX(100%)}}
 
+  main{display:block}
   section.s{padding:140px 44px;max-width:1240px;margin:0 auto}
   .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ember);margin:0 0 20px}
   h2{font-family:"Playfair Display",serif;font-weight:500;font-size:clamp(32px,5vw,58px);line-height:1.02;letter-spacing:-.015em;margin:0 0 28px;max-width:18ch}
@@ -72,48 +97,116 @@
   .lead{font-size:20px;color:var(--ink);max-width:54ch;line-height:1.5}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
   .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
-  .card{border:1px solid var(--line);padding:28px;border-radius:2px;background:linear-gradient(180deg,#0e0e15,#0a0a10);transition:border-color .25s,transform .25s}
-  .card:hover{border-color:var(--ember);transform:translateY(-3px)}
-  .card .tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ember)}
-  .card h3{margin:14px 0 8px}.card p{font-size:14px;margin:0}
+  .inline-link{color:var(--ink);border-bottom:1px solid var(--ember);padding-bottom:1px}
+  .inline-link:hover{color:var(--ember)}
+
+  .card{display:flex;flex-direction:column;border:1px solid var(--line);padding:0;border-radius:2px;
+    background:linear-gradient(180deg,#0e0e15,#0a0a10);transition:border-color .25s,transform .25s;overflow:hidden;height:100%}
+  a.card:hover,a.feature:hover{border-color:var(--ember);transform:translateY(-3px)}
+  .card .media{aspect-ratio:16/10;overflow:hidden;background:#08080d}
+  .card .media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  a.card:hover .media img{transform:scale(1.04)}
+  .card .body{padding:24px 28px 28px}
+  .card .tag,.feature .tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ember)}
+  .card h3{margin:12px 0 8px}.card p{font-size:14px;margin:0}
+  .go{display:inline-block;margin-top:16px;font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  a.card:hover .go,a.feature:hover .go{color:var(--ember)}
+
+  .feature{display:grid;grid-template-columns:1.15fr .85fr;gap:0;border:1px solid var(--line);
+    background:linear-gradient(180deg,#0e0e15,#0a0a10);overflow:hidden;margin-top:40px;transition:border-color .25s,transform .25s}
+  .feature .media{min-height:280px}
+  .feature .media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  a.feature:hover .media img{transform:scale(1.03)}
+  .feature .body{padding:36px 40px;display:flex;flex-direction:column;justify-content:center}
+  .feature h3{font-size:clamp(26px,3vw,36px);line-height:1.1;margin:12px 0 14px}
+  .feature p{font-size:15px}
+
+  .more{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin-top:28px;border:1px solid var(--line)}
+  .more a{background:var(--bg);padding:22px 24px;transition:background .2s}
+  .more a:hover{background:#12121a}
+  .more span{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ember)}
+  .more strong{display:block;margin-top:8px;font-family:"Playfair Display",serif;font-weight:500;font-size:18px}
+
   .quote{border-left:1px solid var(--ember);padding:4px 0 4px 22px}
   .quote p{font-family:"Playfair Display",serif;font-style:italic;font-size:20px;color:var(--ink);line-height:1.4}
   .quote .who{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:14px}
+
   .cta{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:110px 44px;text-align:center;
     background:radial-gradient(ellipse at center,rgba(255,92,56,.08) 0%,transparent 70%)}
   .cta h2{margin-left:auto;margin-right:auto}
+  .cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
   .btn{display:inline-block;margin-top:18px;background:var(--ember);color:#0b0b10;padding:16px 32px;font-size:12px;
-    letter-spacing:.22em;text-transform:uppercase;font-weight:700;border-radius:2px;transition:background .2s}
+    letter-spacing:.22em;text-transform:uppercase;font-weight:700;border-radius:2px;transition:background .2s;border:1px solid transparent}
   .btn:hover{background:var(--ember2)}
-  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);margin-left:10px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
   .btn.ghost:hover{border-color:var(--ember);color:var(--ember)}
+
   footer{padding:48px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--muted)}
   footer .mono{font-family:"JetBrains Mono",monospace;letter-spacing:.14em;font-size:10px;text-transform:uppercase}
-  @media(max-width:720px){.nav{padding:16px 20px}.nav .links{display:none}.copy{padding:80px 22px 28px}section.s{padding:90px 22px}.cta{padding:80px 22px}footer{padding:32px 22px}}
+  footer a:hover{color:var(--ember)}
+  .socials{display:flex;gap:18px;flex-wrap:wrap}
+
+  @media(max-width:900px){
+    .g2,.g3,.more,.feature{grid-template-columns:1fr}
+    .feature .media{min-height:220px;aspect-ratio:16/10}
+  }
+  @media(max-width:720px){
+    .nav{padding:14px 20px}
+    .menu-btn{display:inline-flex}
+    .nav .links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;
+      background:rgba(11,11,16,.96);border-bottom:1px solid var(--line);padding:8px 0 16px}
+    .nav .links.is-open{display:flex}
+    .nav .links a{padding:14px 20px;opacity:1}
+    .copy{padding:80px 22px 28px}
+    .phase-label{display:none}
+    section.s{padding:90px 22px}
+    .cta{padding:80px 22px}
+    footer{padding:32px 22px}
+    .card .body,.feature .body{padding:22px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .hero{height:100vh}
+    canvas.dig,.hint,.phase-label,.progbar,.grain{display:none}
+    video.hv{opacity:1!important;filter:none!important;transform:none!important}
+    .kicker,.title,.sub{opacity:1;transform:none;transition:none}
+    .kicker .dot,.hint .bar::after{animation:none}
+    a.card:hover,a.feature:hover{transform:none}
+  }
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Aaron Jones","honorificSuffix":"BEM","jobTitle":"Creative Technologist","email":"mailto:aaronjonesvideo@gmail.com","url":"https://github.com/yepicaiaaron/Portfolio","sameAs":["https://www.linkedin.com/in/aaronbenjaminjones","https://github.com/yepicaiaaron","https://twitter.com/aaronjonesbiz","https://www.instagram.com/aaron_benjamin_jones"]}
+</script>
 </head>
 <body>
 
-<div class="progbar" id="prog"></div>
-<div class="phase-label" id="phase"><b>01</b> — Rain</div>
+<a class="skip" href="#about">Skip to content</a>
+<div class="progbar" id="prog" aria-hidden="true"></div>
 
-<nav class="nav">
+<nav class="nav" id="nav" aria-label="Primary">
   <a class="mark" href="#top">Aaron Jones</a>
-  <div class="links"><a href="#about">About</a><a href="#work">Work</a><a href="#talks">Talks</a><a href="#contact">Contact</a></div>
+  <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+  <div class="links" id="nav-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#talks">Talks</a>
+    <a href="#contact">Contact</a>
+  </div>
 </nav>
 
-<section class="hero" id="top">
+<header class="hero" id="top">
   <div class="stick">
     <div class="v-wrap">
       <video class="hv" id="hv" crossorigin="anonymous"
              src="https://v3b.fal.media/files/b/0a966513/bLlGLqc42nAPdHZndES9Y_output.mp4"
-             muted loop playsinline preload="auto"></video>
+             muted loop playsinline preload="metadata" aria-hidden="true"></video>
     </div>
-    <div class="warmglow" id="warm"></div>
-    <canvas class="dig" id="hc"></canvas>
-    <div class="vignette"></div>
-    <div class="grain"></div>
+    <div class="warmglow" id="warm" aria-hidden="true"></div>
+    <canvas class="dig" id="hc" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="phase-label" id="phase" aria-hidden="true"><b>01</b> — Rain</div>
     <div class="copy">
       <div>
         <div class="kicker" id="kick"><span class="dot"></span>Aaron Jones BEM · Creative Technologist</div>
@@ -126,16 +219,17 @@
       <div class="hint" id="hint"><span class="bar"></span>Scroll to begin</div>
     </div>
   </div>
-</section>
+</header>
 
+<main>
 <section class="s" id="about">
   <p class="eyebrow">01 · About</p>
   <div class="g2">
     <h2>I make machines feel like people, without pretending they are.</h2>
     <div>
       <p class="lead">Aaron Jones is a creative technologist and founder working at the intersection of AI, media and real-time systems.</p>
-      <p style="margin-top:18px">For the last decade he’s led product and engineering at the edge of synthetic media — founding Yepic AI to build presenter-quality video from text, shipping SDKs used by Fortune-500 learning teams, and advising start-ups on how to make AI feel less uncanny and more inevitable. He was awarded a BEM in 2024 for services to innovation.</p>
-      <p style="margin-top:18px">He keeps a small practice: one product at a time, one stage at a time, one long-form idea at a time.</p>
+      <p style="margin-top:18px">For the last decade he’s led product and engineering at the edge of synthetic media — founding <a class="inline-link" href="https://www.yepic.ai/" target="_blank" rel="noopener noreferrer">Yepic AI</a> to build presenter-quality video from text, shipping SDKs used by Fortune-500 learning teams, and advising start-ups on how to make AI feel less uncanny and more inevitable. He was awarded a <a class="inline-link" href="https://www1.essex.ac.uk/news/event.aspx?e_id=10565" target="_blank" rel="noopener noreferrer">BEM in 2024</a> for services to innovation.</p>
+      <p style="margin-top:18px">He keeps a small practice: one product at a time, one stage at a time, one long-form idea at a time. Research and experiments live in the open on <a class="inline-link" href="https://github.com/yepicaiaaron" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
     </div>
   </div>
 </section>
@@ -143,10 +237,62 @@
 <section class="s" id="work">
   <p class="eyebrow">02 · Selected Work</p>
   <h2>Shipping where the metal meets the model.</h2>
-  <div class="g3" style="margin-top:40px">
-    <div class="card"><div class="tag">Founder · 2018 – 2025</div><h3>Yepic AI</h3><p>Real-time AI video avatars for training, support and sales. Shipped the browser-native Presenter SDK; scaled to millions of generated minutes.</p></div>
-    <div class="card"><div class="tag">Advisor · Ongoing</div><h3>Multimodal studios</h3><p>Hands-on product direction for early-stage founders shipping real-time AI — from agent UX to latency-first infra.</p></div>
-    <div class="card"><div class="tag">Lab · 2026</div><h3>Expressive interfaces</h3><p>Long-running experiment into interfaces that feel composed rather than computed. This site is one of them.</p></div>
+
+  <a class="feature" href="https://yepic.webflow.io/case-studies/rory-sutherland-ai-clone-madfest" target="_blank" rel="noopener noreferrer">
+    <div class="media">
+      <img src="https://cdn.prod.website-files.com/619e8219a59fbac24cdb021a/6a5cbb7831c8a1455c631e72_6a5cb9ed9a60ab3cb307ed51_rory-real-making-of-montage.jpeg" alt="Behind the scenes creating Rory Sutherland's AI confessional for MADFest" width="1200" height="750" loading="lazy" decoding="async">
+    </div>
+    <div class="body">
+      <div class="tag">Experience · MADFest 2025</div>
+      <h3>Bless me, Rory. I’ve sinned.</h3>
+      <p>A marketing confessional: a digital Rory Sutherland, in his voice, with his wit. Concept to live experience in five days — likeness, design, code and delivery.</p>
+      <span class="go">Read the case study ↗</span>
+    </div>
+  </a>
+
+  <div class="g3" style="margin-top:28px">
+    <a class="card" href="https://www.yepic.ai/" target="_blank" rel="noopener noreferrer">
+      <div class="body">
+        <div class="tag">Founder · 2018 – 2025</div>
+        <h3>Yepic AI</h3>
+        <p>Real-time AI video avatars for training, support and sales. Shipped the browser-native Presenter SDK; scaled to millions of generated minutes.</p>
+        <span class="go">Visit yepic.ai ↗</span>
+      </div>
+    </a>
+    <a class="card" href="https://yepic.webflow.io/case-studies/famous-ai-personas-london-tech-week" target="_blank" rel="noopener noreferrer">
+      <div class="media">
+        <img src="https://cdn.prod.website-files.com/619e8219a59fbac24cdb021a/6a5ba1a2ca1b5a91cd7bea72_6a5ba0e78374d7fa56973cd5_ltw-live-personas-1.jpeg" alt="Live AI host personas at London Tech Week" width="1200" height="750" loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <div class="tag">Live knowledge · 2025</div>
+        <h3>London Tech Week</h3>
+        <p>AI versions of Oli Barrett and Susannah Streeter, connected to live stage transcripts. Conversations about what was happening, as it happened.</p>
+        <span class="go">Read the story ↗</span>
+      </div>
+    </a>
+    <a class="card" href="https://yepic.webflow.io/case-studies/abu-dhabi-aviation-oracle-enterprise-ai-avatar" target="_blank" rel="noopener noreferrer">
+      <div class="body">
+        <div class="tag">Enterprise · On-premise</div>
+        <h3>Abu Dhabi Aviation × Oracle</h3>
+        <p>Legacy aviation data, spoken answers and interactive charts — with permissions built in. Speech, language and video on local hardware.</p>
+        <span class="go">Read the story ↗</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="more">
+    <a href="https://yepic.webflow.io/case-studies/oman-digital-election-ai-video-at-national-scale" target="_blank" rel="noopener noreferrer">
+      <span>Oman / Shura Council</span>
+      <strong>Election information at national scale</strong>
+    </a>
+    <a href="https://yepic.webflow.io/case-studies/sdaia-ksu-ai-employment-coach-athka" target="_blank" rel="noopener noreferrer">
+      <span>Saudi Arabia / SDAIA × KSU</span>
+      <strong>A first interview, a more confident beginning</strong>
+    </a>
+    <a href="https://github.com/yepicaiaaron/awesome-realtime-video-generation" target="_blank" rel="noopener noreferrer">
+      <span>Open source</span>
+      <strong>Real-time video generation research</strong>
+    </a>
   </div>
 </section>
 
@@ -157,6 +303,7 @@
     <div>
       <p class="lead">Keynotes and panels on AI, synthetic media and product craft — delivered with the pacing of someone who has actually shipped the thing being discussed.</p>
       <p style="margin-top:22px">Recent stages: Web Summit, SaaStock, The Next Web, CogX, Founders Forum.</p>
+      <p style="margin-top:22px"><a class="inline-link" href="mailto:aaronjonesvideo@gmail.com?subject=Speaking%20enquiry">Bring me to your stage ↗</a></p>
     </div>
   </div>
   <div class="g3" style="margin-top:56px">
@@ -170,17 +317,35 @@
   <p class="eyebrow">04 · Work Together</p>
   <h2>Got a product that needs to feel alive?</h2>
   <p style="margin:0 auto;max-width:54ch">Book a conversation — advisory, talks, or the occasional build.</p>
-  <div><a class="btn" href="mailto:aaronjonesvideo@gmail.com">Book a call</a><a class="btn ghost" href="#work">See the work</a></div>
+  <div class="cta-actions">
+    <a class="btn" href="https://calendar.app.google/pZkjBD1BnG83RQxi7" target="_blank" rel="noopener noreferrer">Book a call</a>
+    <a class="btn ghost" href="mailto:aaronjonesvideo@gmail.com">Email Aaron</a>
+  </div>
 </section>
+</main>
 
 <footer>
   <div class="mono">Aaron Jones · MMXXVI</div>
+  <div class="socials mono">
+    <a href="https://www.linkedin.com/in/aaronbenjaminjones" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a href="https://github.com/yepicaiaaron" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="https://twitter.com/aaronjonesbiz" target="_blank" rel="noopener noreferrer">X</a>
+    <a href="mailto:aaronjonesvideo@gmail.com">Email</a>
+  </div>
   <div class="mono">Composed, not computed.</div>
-  <div class="mono">aaronjonesvideo@gmail.com</div>
 </footer>
+
+<noscript>
+  <style>
+    .hero{height:auto;min-height:100vh}
+    video.hv,.kicker,.title,.sub{opacity:1;transform:none}
+    canvas.dig,.hint,.phase-label,.progbar{display:none}
+  </style>
+</noscript>
 
 <script>
 (() => {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hero   = document.getElementById('top');
   const stick  = hero.firstElementChild;
   const video  = document.getElementById('hv');
@@ -190,15 +355,82 @@
   const prog   = document.getElementById('prog');
   const phaseEl= document.getElementById('phase');
   const hintEl = document.getElementById('hint');
+  const nav    = document.getElementById('nav');
+  const menuBtn= document.getElementById('menu-btn');
+  const links  = document.getElementById('nav-links');
 
-  video.play().catch(() => {});
+  menuBtn.addEventListener('click', () => {
+    const open = links.classList.toggle('is-open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.textContent = open ? 'Close' : 'Menu';
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('is-open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.textContent = 'Menu';
+  }));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && links.classList.contains('is-open')) {
+      links.classList.remove('is-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.textContent = 'Menu';
+      menuBtn.focus();
+    }
+  });
+
+  const playVideo = () => video.play().catch(() => {});
+  playVideo();
+
+  setTimeout(() => {
+    document.getElementById('kick').classList.add('on');
+    document.getElementById('htitle').classList.add('on');
+    document.getElementById('hsub').classList.add('on');
+  }, reduceMotion ? 0 : 400);
+
+  let p = 0;
+  let running = false;
+  let startLoop = () => {};
+  const heroVisible = () => {
+    const r = hero.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  };
+  function onScroll(){
+    const r = hero.getBoundingClientRect();
+    const total = r.height - window.innerHeight;
+    const s = Math.min(Math.max(-r.top, 0), total);
+    p = total > 0 ? s / total : (reduceMotion ? 1 : 0);
+    prog.style.width = (p*100).toFixed(2) + '%';
+    nav.classList.toggle('is-solid', r.bottom < window.innerHeight * 0.72);
+    if (phaseEl) {
+      const label = p<.08?'Rain':p<.42?'Assemble':p<.55?'Portrait':p<.85?'Dissolve':'Presence';
+      const num   = p<.08?'01':p<.42?'02':p<.55?'03':p<.85?'04':'05';
+      phaseEl.innerHTML = `<b>${num}</b> \u2014 ${label}`;
+    }
+    if (hintEl) hintEl.style.opacity = p > 0.03 ? 0 : 1;
+    if (!reduceMotion && !running && p < 0.98 && heroVisible()) startLoop();
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  if (reduceMotion) {
+    video.style.opacity = '1';
+    video.style.filter = 'saturate(1.06) contrast(1.04)';
+    warm.style.opacity = '0.5';
+    return;
+  }
 
   /* GRID */
-  const COLS = 140;
+  let COLS = 140;
   let ROWS = 100;
   let bright, digits, ticks;
-  // Per-digit spawn: where the digit starts (above screen) and when it arrives
   let spawnY, spawnX, arriveAt, wobblePhase;
+
+  function gridCols(){
+    const w = window.innerWidth;
+    if (w < 720) return 52;
+    if (w < 1100) return 96;
+    return 140;
+  }
 
   function alloc(){
     const n = COLS * ROWS;
@@ -215,18 +447,11 @@
         const k = j * COLS + i;
         digits[k] = (Math.random()*10)|0;
         ticks[k]  = Math.random();
-
-        // Spawn position: above screen, scattered
         const rowFrac = j / ROWS;
         spawnY[k] = -(0.4 + Math.random() * 1.2);
         spawnX[k] = (Math.random() - 0.5) * 0.3;
-
-        // When this digit arrives at its home position
         arriveAt[k] = 0.05 + rowFrac * 0.28 + Math.random() * 0.07;
-
         wobblePhase[k] = Math.random() * Math.PI * 2;
-
-        // Seed brightness
         const cx = i/(COLS-1) - 0.5, cy = j/(ROWS-1) - 0.45;
         const glow = Math.max(0, 1 - Math.hypot(cx*1.1, cy*1.3) * 2.0);
         bright[k] = glow * 0.65 + Math.random() * 0.06;
@@ -237,8 +462,9 @@
   const off = document.createElement('canvas');
   const octx = off.getContext('2d', { willReadFrequently: true });
 
-  let CW = 0, CH = 0, DPR = 1;
+  let CW = 0, CH = 0, DPR = 1, resizeTimer = 0;
   function resize(){
+    COLS = gridCols();
     DPR = Math.min(2, window.devicePixelRatio || 1);
     CW = stick.clientWidth; CH = stick.clientHeight;
     canvas.style.width  = CW + 'px';
@@ -246,34 +472,15 @@
     canvas.width  = CW * DPR;
     canvas.height = CH * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ROWS = Math.round(COLS * (CH / CW));
+    ROWS = Math.max(24, Math.round(COLS * (CH / Math.max(1, CW))));
     off.width = COLS; off.height = ROWS;
     alloc();
   }
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
   resize();
-
-  /* SCROLL */
-  let p = 0;
-  function onScroll(){
-    const r = hero.getBoundingClientRect();
-    const total = r.height - window.innerHeight;
-    const s = Math.min(Math.max(-r.top, 0), total);
-    p = total > 0 ? s / total : 0;
-    prog.style.width = (p*100).toFixed(2) + '%';
-    const label = p<.08?'Rain':p<.42?'Assemble':p<.55?'Portrait':p<.85?'Dissolve':'Presence';
-    const num   = p<.08?'01':p<.42?'02':p<.55?'03':p<.85?'04':'05';
-    phaseEl.innerHTML = `<b>${num}</b> \u2014 ${label}`;
-    hintEl.style.opacity = p > 0.03 ? 0 : 1;
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  setTimeout(() => {
-    document.getElementById('kick').classList.add('on');
-    document.getElementById('htitle').classList.add('on');
-    document.getElementById('hsub').classList.add('on');
-  }, 400);
 
   /* SAMPLE VIDEO */
   function sample(){
@@ -313,9 +520,7 @@
     } return s[s.length-1][1];
   }
 
-  // smoothstep
   const ss = (a,b,x) => { const t=Math.max(0,Math.min(1,(x-a)/(b-a))); return t*t*(3-2*t); };
-  // bounce ease-out
   function bounceOut(t){
     if(t<1/2.75) return 7.5625*t*t;
     if(t<2/2.75){t-=1.5/2.75; return 7.5625*t*t+0.75;}
@@ -323,29 +528,17 @@
     t-=2.625/2.75; return 7.5625*t*t+0.984375;
   }
 
-  /* RENDER */
-  let last = 0;
+  let last = 0, raf = 0;
   function frame(t){
+    if (!running) return;
+    if (document.hidden || !heroVisible()) { running = false; video.pause(); return; }
     if (t - last > 33){ sample(); last = t; }
 
-    /*
-     * SCROLL PHASES (600vh = 6 screens of scroll):
-     *   0.00–0.40  RAIN + ASSEMBLE: digits fall from above and land into place forming the face
-     *   0.40–0.55  HOLD: digit portrait fully assembled, living/breathing
-     *   0.55–0.90  DISSOLVE: digits fade out, video fades in behind
-     *   0.90–1.00  VIDEO: full video, last digits gone
-     */
-
-    // Phase calculations
-    const assemblePhase = ss(0.0, 0.42, p);   // 0\u21921 as digits land
-    const holdPhase     = (p >= 0.42 && p < 0.55) ? 1 : 0;
     const dissolveStart = 0.55;
     const dissolveEnd   = 0.92;
-    const dissolvePhase = ss(dissolveStart, dissolveEnd, p); // 0\u21921 as digits vanish
-    const videoReveal   = ss(0.52, 0.90, p);                 // video opacity
-    const digitAlpha    = 1 - ss(dissolveStart, 1.0, p);     // overall digit fade
+    const videoReveal   = ss(0.52, 0.90, p);
+    const digitAlpha    = 1 - ss(dissolveStart, 1.0, p);
 
-    // Video styling
     const blur  = (1 - videoReveal) * 12;
     const scale = 1.0 + (1 - videoReveal) * 0.04;
     video.style.filter    = `saturate(1.06) contrast(1.04) blur(${blur.toFixed(1)}px)`;
@@ -353,11 +546,13 @@
     video.style.transform = `scale(${scale.toFixed(4)})`;
     warm.style.opacity    = (videoReveal * 0.7).toFixed(3);
 
-    // Clear
     ctx.fillStyle = `rgba(5,5,10,${(0.92 - videoReveal * 0.6).toFixed(3)})`;
     ctx.fillRect(0, 0, CW, CH);
 
-    if (digitAlpha < 0.01){ requestAnimationFrame(frame); return; }
+    if (digitAlpha < 0.01){
+      running = false;
+      return;
+    }
 
     const cellW = CW / COLS;
     const cellH = CH / ROWS;
@@ -375,55 +570,41 @@
         b += 0.02 * Math.sin(ts * 1.1 + i * 0.11 + j * 0.16);
         b = Math.max(0, Math.min(1, b));
 
-        // Digit cycling
         const speed = 0.5 + b * 3.0 + 0.8;
         ticks[idx] += 0.016 * speed;
         if (ticks[idx] > 1){ ticks[idx] = 0; digits[idx] = (digits[idx] + 1 + ((Math.random()*3)|0)) % 10; }
 
         if (b < 0.06) continue;
 
-        // HOME position
         const homeX = (i + 0.5) * cellW;
         const homeY = (j + 0.5) * cellH;
-
         let drawX = homeX;
         let drawY = homeY;
         let a = digitAlpha;
 
-        // ===== PHASE 1: GRAVITY FALL IN =====
         const arrive = arriveAt[idx];
-        const fallDuration = arrive;
-
         if (p < arrive){
           const fallProgress = Math.max(0, p / arrive);
           const eased = bounceOut(fallProgress);
-
           const startPxY = spawnY[idx] * CH;
           drawY = startPxY + (homeY - startPxY) * eased;
-
           const startPxX = homeX + spawnX[idx] * CW;
           drawX = startPxX + (homeX - startPxX) * eased;
-
           const wobble = Math.sin(fallProgress * 8 + wobblePhase[idx]) * (1 - fallProgress) * 10;
           drawX += wobble;
-
           const screenEntry = (drawY + cellH) / CH;
           if (screenEntry < 0) a = 0;
           else a *= Math.min(1, screenEntry * 3);
-
           ticks[idx] += 0.06 * (1 - fallProgress);
         }
 
-        // ===== PHASE 2: DISSOLVE OUT =====
         if (p >= dissolveStart){
           const cx = i/(COLS-1) - 0.5, cy = j/(ROWS-1) - 0.5;
           const d = Math.hypot(cx, cy);
           const cellDissolve = ss(dissolveStart + d*0.12, dissolveEnd - 0.05 + d*0.12, p);
-
           const fallAway = cellDissolve * cellDissolve;
           drawY = homeY + fallAway * CH * 0.6;
           drawX = homeX + Math.sin(cellDissolve * 5 + idx * 0.1) * cellDissolve * 15;
-
           a *= (1 - cellDissolve);
         }
 
@@ -436,9 +617,27 @@
       }
     }
 
-    requestAnimationFrame(frame);
+    raf = requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+
+  startLoop = () => {
+    if (running || reduceMotion) return;
+    running = true;
+    playVideo();
+    raf = requestAnimationFrame(frame);
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      running = false;
+      video.pause();
+      cancelAnimationFrame(raf);
+    } else if (heroVisible() && p < 0.98) {
+      startLoop();
+    }
+  });
+
+  startLoop();
 })();
 </script>
 </body>
