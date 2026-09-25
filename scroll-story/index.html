@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Making Of · Aaron Jones</title>
+<meta name="description" content="Aaron Jones BEM: builder, creative technologist and speaker. From a social enterprise in Cambodia and visual search to talking photos, live AI experiences and world models.">
+<meta property="og:title" content="The Making Of · Aaron Jones">
+<meta property="og:description" content="From social enterprise and visual search to generative video, live AI experiences and world models.">
+<meta property="og:image" content="a/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 fill=%22%231E2A44%22/%3E%3Ccircle cx=%2222%22 cy=%2212%22 r=%226%22 fill=%22%23FF7A1F%22/%3E%3Cpath d=%22M0 24q8-6 16-2t16-2v12H0z%22 fill=%22%233F7A4A%22/%3E%3C/svg%3E">
+<meta name="theme-color" content="#05070c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Figtree:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Homemade";src:url(a/site/homemade.woff2) format("woff2");font-display:swap}
+:root{
+  --cream:#F1E8D2;--paper:#FBF6EA;--pitch:#3F7A4A;--deep:#1E2A44;--velvet:#8E1B2B;
+  --orange:#FF7A1F;--rust:#B8430C;--yellow:#F2C230;--night:#12151F;--ink:#161616;
+  --muted:#56564A;--line:#D9CEB4;--ice:#8FD6FF;
+  --k:1;--floor:7vh;
+}
+/* The paper world is art-directed to look the same in light and dark themes. */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:light}}
+:root[data-theme="dark"]{color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#05070c;color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif;overflow-x:hidden}
+img{display:block;max-width:none}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- HUD ---------- */
+.chalk{position:fixed;left:0;top:0;height:4px;width:100%;background:var(--paper);transform-origin:0 50%;transform:scaleX(0);z-index:70;opacity:.9}
+.hud{position:fixed;inset:14px 16px auto 16px;display:flex;justify-content:space-between;align-items:flex-start;z-index:60;pointer-events:none}
+.mark{pointer-events:auto;text-decoration:none;background:var(--deep);color:var(--paper);font:900 18px/1 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:9px 12px 8px;box-shadow:3px 3px 0 var(--orange)}
+.clock{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:999px;padding:8px 14px 8px 12px;font:500 12px/1 "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;opacity:0;transition:opacity .4s}
+.clock.on{opacity:1}
+.clock i{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(255,122,31,.25)}
+.clock b{color:var(--yellow);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* ---------- Intro ---------- */
+#intro{position:relative;height:720vh;background:#05070c}
+#intro .stage{position:sticky;top:0;height:100svh;overflow:hidden}
+#rig{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+#turn,#dig{position:absolute;inset:0;width:100%;height:100%}
+#dig{filter:drop-shadow(0 0 5px rgba(47,168,230,.55))}
+#screen{position:absolute;overflow:hidden;background:#dfeefa}
+#screen>*{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#screen .s-sketch,#screen .s-paper,#screen .s-detail{opacity:0}
+#sdig{filter:drop-shadow(0 0 4px rgba(47,168,230,.6))}
+.vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55))}
+.i-title{position:absolute;left:clamp(16px,4vw,56px);top:clamp(70px,13vh,130px);color:#fff;z-index:5}
+.i-title h1{margin:0;font:300 clamp(46px,8vw,120px)/.95 Figtree,sans-serif;letter-spacing:-.03em}
+.i-title p{margin:.3em 0 0;font:clamp(18px,2.2vw,30px)/1.6 "Homemade",cursive;color:var(--ice)}
+.i-line{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(40px,12vh,120px);max-width:min(620px,86vw);color:#fff;font:600 clamp(28px,4vw,54px)/1.08 Figtree,sans-serif;letter-spacing:-.02em;opacity:0;z-index:5;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+.i-cap{position:absolute;left:50%;bottom:clamp(18px,5vh,44px);transform:translateX(-50%);z-index:6;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:92vw}
+.i-cap span{font:500 12px/1 "DM Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);background:rgba(5,7,12,.72);border:1px solid rgba(143,214,255,.25);border-radius:999px;padding:9px 12px;transition:color .3s,background .3s,border-color .3s;opacity:0}
+.i-cap span.on{color:var(--ink);background:var(--paper);border-color:var(--paper)}
+.i-hint{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(40px,12vh,120px);color:rgba(255,255,255,.7);font:500 12px/1 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;z-index:5}
+.i-card{position:absolute;left:50%;top:50%;width:min(620px,calc(100vw - 32px));transform:translate(-50%,-50%) rotate(-.6deg);background:var(--paper);padding:clamp(22px,4vw,40px);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);z-index:7;opacity:0;visibility:hidden}
+.kicker{margin:0 0 10px;font:500 11px/1.3 "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--rust)}
+.i-card h2{margin:0 0 14px;font:900 clamp(56px,9vw,120px)/.86 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--deep);text-shadow:4px 4px 0 var(--orange);transform:rotate(-1.2deg)}
+.i-card h2 small{display:block;font-size:.42em;color:var(--orange);text-shadow:3px 3px 0 var(--deep);margin-top:.18em}
+.i-card p{margin:0 0 10px}
+.i-card .go{font:500 12px/1 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+
+/* ---------- Chapters ---------- */
+.ch{position:relative;height:calc(var(--len) * var(--lk,1))}
+.ch .stage{position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate;background:var(--bg,#e9dcc0)}
+.ch .stage::before{content:"";position:absolute;left:0;right:0;top:-1px;height:18px;z-index:40;pointer-events:none;
+  background:linear-gradient(#05070c,#05070c) top/100% 0 no-repeat;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 18' preserveAspectRatio='none'%3E%3Cpath d='M0 0H200V6L194 9 187 5 180 10 172 6 165 11 157 7 150 10 141 5 133 9 126 6 118 11 110 7 103 10 95 5 87 9 80 6 72 12 64 7 57 10 49 5 41 9 33 6 25 11 18 7 10 10 4 6 0 9Z'/%3E%3C/svg%3E") 0 0/100% 100%;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 18' preserveAspectRatio='none'%3E%3Cpath d='M0 0H200V6L194 9 187 5 180 10 172 6 165 11 157 7 150 10 141 5 133 9 126 6 118 11 110 7 103 10 95 5 87 9 80 6 72 12 64 7 57 10 49 5 41 9 33 6 25 11 18 7 10 10 4 6 0 9Z'/%3E%3C/svg%3E") 0 0/100% 100%;
+  background:rgba(0,0,0,.18)}
+.cover16{position:absolute;left:0;top:50%;width:max(100vw,177.78svh);height:max(100svh,56.25vw);transform:translate(clamp(calc(100vw - 100%),calc(50vw - var(--fx,50%)),0px),-50%)}
+.cover16.sky{height:max(108svh,60.75vw)}
+.L{position:absolute;inset:0}
+.L>img.fill{width:100%;height:100%;object-fit:cover}
+.sky{z-index:1}.scn{z-index:3}.fx{z-index:8}.grass{z-index:12}
+.grassL{position:absolute;left:0;right:0;bottom:-3%;height:max(15vh,13vw);z-index:12;pointer-events:none}
+.grassL img{width:100%;height:100%;object-fit:cover;object-position:50% 0}
+.spr{position:absolute;left:var(--x);bottom:calc(var(--floor) + var(--b,0vh));height:calc(var(--h) * var(--k));width:auto;z-index:9;filter:drop-shadow(0 10px 10px rgba(0,0,0,.22));pointer-events:none}
+.pin{position:absolute}
+canvas.over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* panels */
+.panel{position:absolute;z-index:30;top:84px;width:min(440px,38vw);max-height:calc(100svh - 110px);overflow:hidden;overscroll-behavior:contain;background:var(--paper);border-radius:3px;padding:26px 26px 22px;box-shadow:0 22px 44px -18px rgba(0,0,0,.55)}
+.panel.left{left:clamp(16px,3vw,48px);transform:rotate(-.5deg)}
+.panel.right{right:clamp(16px,3vw,48px);transform:rotate(.5deg)}
+.panel::before{content:"";position:absolute;left:50%;top:-6px;width:92px;height:22px;margin-left:-46px;background:rgba(255,122,31,.78);transform:rotate(-3deg);mix-blend-mode:multiply}
+.nogsap .panel{overflow:auto}
+.panel.more{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 56px),rgba(0,0,0,.08));mask-image:linear-gradient(to bottom,#000 calc(100% - 56px),rgba(0,0,0,.08))}
+.eyebrow{margin:0 0 8px;font:500 12px/1.3 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--rust)}
+.panel h2{margin:0 0 12px;font:900 clamp(32px,3.6vw,50px)/.92 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--deep);text-wrap:balance}
+.panel p{margin:0 0 12px}
+.small{font-size:13px;color:var(--muted);line-height:1.45}
+.note{background:rgba(242,194,48,.28);border-left:4px solid var(--yellow);padding:10px 12px;margin:0 0 12px;font-size:14px}
+.rule{height:2px;margin:14px 0;background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 14px)}
+.big{display:flex;align-items:baseline;gap:12px;margin:4px 0 10px}
+.big b{font:900 clamp(52px,6vw,72px)/.9 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;color:var(--orange);font-variant-numeric:tabular-nums}
+.big span{font-weight:700;line-height:1.2;max-width:14em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.chips button,.seg button{appearance:none;border:2px solid var(--deep);background:transparent;color:var(--deep);border-radius:999px;padding:9px 14px;min-height:44px;font:600 14px/1 Figtree,sans-serif;cursor:pointer}
+.chips button[aria-pressed=true],.seg button[aria-pressed=true]{background:var(--deep);color:var(--paper)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:2px solid var(--deep);border-radius:999px;padding:3px;gap:3px;margin:6px 0 12px}
+.seg button{border:0;padding:9px 8px}
+.result{font-size:14px;min-height:3em;margin:0 0 8px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.tags span{display:inline-block;background:var(--cream);border:1.5px solid var(--deep);border-radius:4px 14px 14px 4px;padding:6px 12px 6px 10px;font:500 12px/1.2 "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;background:var(--orange);color:var(--ink);text-decoration:none;font-weight:700;border-radius:3px;border:0;box-shadow:3px 3px 0 var(--ink);cursor:pointer;font-size:15px}
+.btn:active{box-shadow:1px 1px 0 var(--ink);transform:translate(2px,2px)}
+.btn.ghost{background:transparent;border:2px solid var(--deep);box-shadow:none;color:var(--deep)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.links a{font-weight:600;color:var(--deep)}
+.logos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.logos img{width:100%;height:34px;object-fit:contain;background:#fff;border-radius:3px;padding:4px}
+.thumb{width:100%;height:auto;border-radius:3px;margin:0 0 10px;box-shadow:0 6px 16px -8px rgba(0,0,0,.5)}
+dl.kv{margin:0 0 10px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px}
+dl.kv dt{font:500 11px/1.6 "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--pitch)}
+dl.kv dd{margin:0;font-size:14px}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 12px}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:6px;margin:0 0 8px}
+ol.steps li::before{content:counter(s);font:900 24px/1 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;color:var(--orange)}
+
+/* scene furniture */
+.onscreen{position:absolute;overflow:hidden;background:var(--cream)}
+.onscreen img{position:absolute;left:50%;bottom:0;height:92%;width:auto;transform:translateX(-50%)}
+.talk .f2{animation:talk .36s steps(1) infinite}
+@keyframes talk{0%{opacity:1}50%{opacity:0}}
+.face2{opacity:0}
+.talk .face2{opacity:1}
+.beam{position:absolute;bottom:34%;width:26%;height:90%;background:linear-gradient(to top,rgba(255,244,200,.55),rgba(255,244,200,0));clip-path:polygon(44% 100%,56% 100%,100% 0,0 0);mix-blend-mode:screen;transform-origin:50% 100%;pointer-events:none;z-index:4}
+.spot{position:absolute;bottom:18%;width:30%;height:85%;background:linear-gradient(to top,rgba(255,236,170,.6),rgba(255,236,170,0));clip-path:polygon(35% 100%,65% 100%,100% 0,0 0);mix-blend-mode:screen;pointer-events:none;transition:left .6s cubic-bezier(.3,1.4,.5,1);z-index:5}
+.bigclock{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--night);text-align:center}
+.bigclock b{font:900 clamp(22px,5.5vw,90px)/.9 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;font-variant-numeric:tabular-nums}
+.bigclock span{font:500 clamp(8px,.9vw,13px)/1.2 "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.score{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--yellow);text-align:center;text-shadow:0 0 12px rgba(242,194,48,.6)}
+.score b{font:900 clamp(18px,4.2vw,72px)/.9 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;font-variant-numeric:tabular-nums}
+.score span{font:500 clamp(7px,.8vw,12px)/1.2 "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--paper)}
+.board{position:absolute;display:grid;grid-template-columns:repeat(3,1fr);gap:4% 5%;padding:3% 4%;align-content:start}
+.card{background:var(--paper);padding:8% 9% 9%;box-shadow:0 6px 10px -4px rgba(0,0,0,.45);font:500 clamp(7px,.78vw,12px)/1.3 "DM Mono",monospace;text-transform:uppercase;letter-spacing:.04em;position:relative;color:var(--ink)}
+.card::before{content:"";position:absolute;top:-5px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd98a,#b8860b);box-shadow:0 2px 2px rgba(0,0,0,.4)}
+.card strong{display:block;font:900 clamp(12px,1.35vw,22px)/1 "Big Shoulders Display",Impact,"Arial Narrow",sans-serif;color:var(--deep);letter-spacing:0;margin-bottom:4px}
+footer{background:var(--deep);color:var(--paper);padding:40px 16px 60px;text-align:center}
+footer .links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+footer .links a{color:var(--paper)}
+footer p{margin:6px 0;font-size:14px;opacity:.8}
+
+@media (max-width:760px){
+  :root{--k:.62;--floor:49svh}
+  .ch{--lk:.8}
+  .cover16.scn{top:44px;width:220vw;height:123.75vw;transform:translateX(clamp(calc(100vw - 100%),calc(50vw - var(--fxm,var(--fx,50%))),0px))}
+  .grassL{display:none}
+  #screen.fitc>img{object-fit:contain}
+  .mark{white-space:nowrap}
+  .clock span{max-width:38vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .panel,.panel.left,.panel.right{left:12px;right:12px;width:auto;top:auto;bottom:12px;max-height:47svh;padding:20px 18px 16px;transform:none;font-size:15px}
+  .panel h2{font-size:32px}
+  .big b{font-size:48px}
+  .logos{grid-template-columns:repeat(6,1fr)}
+  .logos img{height:26px}
+  .i-card h2{font-size:50px}
+  .i-hint{display:none}
+  .hud{inset:10px 12px auto 12px}
+  .mark{font-size:15px}
+  .clock{font-size:11px;padding:7px 11px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="sr" href="#c1">Skip the opening</a>
+<div class="chalk" aria-hidden="true"></div>
+<header class="hud">
+  <a class="mark" href="#intro">Aaron Jones</a>
+  <div class="clock" aria-live="polite"><i></i><b id="clk">Reel 0</b><span id="lbl">Opening</span></div>
+</header>
+
+<main>
+<!-- ================= INTRO ================= -->
+<section id="intro" aria-label="Opening">
+  <div class="stage">
+    <div id="rig">
+      <canvas id="turn" aria-hidden="true"></canvas>
+      <div id="screen" aria-hidden="true">
+        <img class="s-sketch" src="a/dev_2_sketch-m.webp" alt="" decoding="async">
+        <img class="s-paper" src="a/style_frame-m.webp" alt="" decoding="async">
+        <img class="s-detail" src="a/dev_4_detailed-m.webp" srcset="a/dev_4_detailed-m.webp 1200w, a/dev_4_detailed.webp 1920w" sizes="100vw" alt="" decoding="async">
+        <canvas id="sdig"></canvas>
+      </div>
+    </div>
+    <canvas id="dig" aria-hidden="true"></canvas>
+    <div class="vig"></div>
+    <div class="i-title">
+      <h1>Aaron Jones</h1>
+      <p>Builder / Creative Technologist / Speaker</p>
+    </div>
+    <p class="i-line">Before anything, I'm a builder. I've spent my career building what comes next.</p>
+    <p class="i-hint">Scroll ↓</p>
+    <div class="i-cap" aria-hidden="true"><span>It starts as data</span><span>Then a sketch</span><span>Then paper</span><span>Then the detail</span></div>
+    <div class="i-card">
+      <p class="kicker">Builder · Creative technologist · Speaker</p>
+      <h2>The Making Of<small>Aaron Jones BEM</small></h2>
+      <p>Every project here started as an idea on a blank screen. This is how some of them were made, reel by reel: from a social enterprise in Cambodia to talking photos, live AI and worlds that respond as you imagine them.</p>
+      <p class="small">The paper is a nod to how ideas really get built: rough first, detail later.</p>
+      <p class="go">Scroll to roll the film ↓</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 1 FIKAY ================= -->
+<section class="ch" id="c1" style="--len:220vh" data-clock="Age 19" data-label="Reel 1 · Fikay">
+  <div class="stage" style="--bg:#efe3c9">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" src="a/sky_dawn-m.webp" srcset="a/sky_dawn-m.webp 1200w, a/sky_dawn.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:38%;--fxm:24%"><div class="L" data-d="scene"><img class="fill" src="a/sc1_fikay-m.webp" srcset="a/sc1_fikay-m.webp 1200w, a/sc1_fikay.webp 2200w" sizes="100vw" alt="A paper cut-out Cambodian riverside workshop at dawn: a stilt house, a sewing machine, recycled materials and handbags on a line, with children walking to school."></div></div>
+    <img class="spr" data-d="aaron" src="a/aaron_01.webp" alt="Cartoon Aaron holding up a clapperboard" style="--x:56%;--b:-2vh;--h:42vh">
+    <div class="grassL" data-d="grass"><img src="a/grass-m.webp" alt=""></div>
+    <div class="panel right">
+      <p class="eyebrow">Reel 1 · A different kind of business</p>
+      <h2>It started with a different way to do business</h2>
+      <p>After volunteering in Cambodia, I wanted to help parents earn a living so their children could stay in education. At nineteen I started <strong>Fikay</strong>, making fashion accessories from recycled materials with local producers.</p>
+      <p>It taught me that a new idea only matters when you bring people into it.</p>
+      <div class="note">British Empire Medal in 2016 for services to ethical fashion. University of Essex Alumnus of the Year in 2018.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2 SEEFASHION ================= -->
+<section class="ch" id="c2" style="--len:250vh" data-clock="2014" data-label="Reel 2 · Visual search">
+  <div class="stage" style="--bg:#e8e0cc">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" src="a/sky_day-m.webp" srcset="a/sky_day-m.webp 1200w, a/sky_day.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:62%;--fxm:50%"><div class="L" data-d="scene"><img class="fill" loading="lazy" decoding="async" src="a/sc2_seefashion-m.webp" srcset="a/sc2_seefashion-m.webp 1200w, a/sc2_seefashion.webp 2200w" sizes="100vw" alt="A paper cut-out high street with a boutique window of three mannequins and a big magnifying glass on the pavement.">
+      <div class="spot" id="spot2" style="left:36%"></div>
+    </div></div>
+    <img class="spr" data-d="aaron" src="a/aaron_02.webp" alt="Cartoon Aaron pointing at the shop window" style="--x:4%;--b:-3vh;--h:40vh" loading="lazy">
+    <div class="panel right">
+      <p class="eyebrow">Reel 2 · SeeFashion</p>
+      <h2>What if the image was the question?</h2>
+      <p>Twelve years ago I was working on visual search. With SeeFashion, I built around computer vision and machine learning, helping people find what they meant even when they didn't have the words.</p>
+      <p class="small">Tap a piece in the window.</p>
+      <div class="chips" role="group" aria-label="Pick an item">
+        <button type="button" data-item="coat" aria-pressed="true">Coat</button>
+        <button type="button" data-item="dress" aria-pressed="false">Dress</button>
+        <button type="button" data-item="jacket" aria-pressed="false">Jacket</button>
+      </div>
+      <div class="tags" id="tags2"><span>Mustard</span><span>Long wool coat</span><span>Similar shapes</span></div>
+      <p class="result" id="res2" aria-live="polite">The camera reads colour, cut and shape, then looks for pieces that match. No typing needed.</p>
+      <p class="small">An illustration of the idea, not the original product interface.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 YEPIC ================= -->
+<section class="ch" id="c3" style="--len:300vh" data-clock="2019" data-label="Reel 3 · Talking photos">
+  <div class="stage" style="--bg:#e5dcc6">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_day-m.webp" srcset="a/sky_day-m.webp 1200w, a/sky_day.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:48%;--fxm:40%"><div class="L" data-d="scene">
+      <img class="fill" loading="lazy" decoding="async" src="a/sc3_yepic-m.webp" srcset="a/sc3_yepic-m.webp 1200w, a/sc3_yepic.webp 2200w" sizes="100vw" alt="A paper cut-out open-air cinema screen beside an easel holding a portrait.">
+      <div class="onscreen" id="easel3" style="left:82.6%;top:47.4%;width:10.6%;height:15.5%"><img src="a/face_01.webp" alt="" loading="lazy"></div>
+      <div class="onscreen" id="scr3" style="left:14.2%;top:19.5%;width:31%;height:45%;background:#f6efdd">
+        <img class="face1" src="a/face_01.webp" alt="" loading="lazy">
+        <img class="face2" src="a/face_02.webp" alt="" loading="lazy">
+      </div>
+      <canvas class="over" id="stream3"></canvas>
+    </div></div>
+    <img class="spr" data-d="aaron" src="a/aaron_03.webp" alt="Cartoon Aaron presenting the screen" style="--x:56%;--b:-3vh;--h:40vh" loading="lazy">
+    <div class="grassL" data-d="grass"><img src="a/grass-m.webp" alt="" loading="lazy"></div>
+    <div class="panel right">
+      <p class="eyebrow">Reel 3 · Yepic AI</p>
+      <h2>One photo. A talking face.</h2>
+      <p>I began working on AI video in 2019. At Yepic we made zero-shot talking photos: a single image could become a talking face, without training a new model for that person. We made it commercially available from 2020.</p>
+      <div class="seg" role="group" aria-label="Photo or talking">
+        <button type="button" data-mode="still" aria-pressed="false">Still photo</button>
+        <button type="button" data-mode="talk" aria-pressed="true">Talking</button>
+      </div>
+      <div class="big"><b id="count3">0</b><span>videos made with Yepic Studio by 2022</span></div>
+      <p class="small">Source: OVHcloud's 2022 case study. The face on the screen is an illustration, not a real customer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4 LIVE ================= -->
+<section class="ch" id="c4" style="--len:260vh" data-clock="Live" data-label="Reel 4 · Live AI">
+  <div class="stage" style="--bg:#e5dcc6">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_day-m.webp" srcset="a/sky_day-m.webp 1200w, a/sky_day.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:30%;--fxm:46%"><div class="L" data-d="scene">
+      <img class="fill" loading="lazy" decoding="async" src="a/sc4_live-m.webp" srcset="a/sc4_live-m.webp 1200w, a/sc4_live.webp 2200w" sizes="100vw" alt="Three paper pavilions on an event lawn: a confessional booth with a screen, a conference stage with two AI hosts, and an interview desk.">
+      <div class="spot" id="spot4" style="left:1%"></div>
+    </div></div>
+    <div class="grassL" data-d="grass"><img src="a/grass-m.webp" alt="" loading="lazy"></div>
+    <div class="panel right">
+      <p class="eyebrow">Reel 4 · Conversations, not clips</p>
+      <h2>Not just a face. Someone to talk to.</h2>
+      <p>We gave people a way to talk with an AI persona. My work joined the models, the interface and the live experience.</p>
+      <div class="seg" role="group" aria-label="Choose an experience">
+        <button type="button" data-live="0" aria-pressed="true">Confess</button>
+        <button type="button" data-live="1" aria-pressed="false">Conference</button>
+        <button type="button" data-live="2" aria-pressed="false">Interview</button>
+      </div>
+      <div id="live4" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5 ENTERPRISE ================= -->
+<section class="ch" id="c5" style="--len:260vh" data-clock="Clients" data-label="Reel 5 · Trusted to deliver">
+  <div class="stage" style="--bg:#eccf8f">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_golden-m.webp" srcset="a/sky_golden-m.webp 1200w, a/sky_golden.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:40%;--fxm:30%"><div class="L" data-d="scene"><img class="fill" loading="lazy" decoding="async" src="a/sc5_enterprise-m.webp" srcset="a/sc5_enterprise-m.webp 1200w, a/sc5_enterprise.webp 2200w" sizes="100vw" alt="A paper cut-out airport with a control tower and a server cabinet, and a white civic building with people walking to vote.">
+      <div class="spot" id="spot5" style="left:66%"></div>
+    </div></div>
+    <div class="panel left">
+      <p class="eyebrow">Reel 5 · Founder, CEO, project lead</p>
+      <h2>Trusted by brands and government</h2>
+      <div class="big"><b id="count5">0</b><span>people used the platform I founded and led</span></div>
+      <div class="seg" role="group" aria-label="Choose a project">
+        <button type="button" data-ent="oman" aria-pressed="true">National election</button>
+        <button type="button" data-ent="air" aria-pressed="false">Airport data</button>
+      </div>
+      <dl class="kv" id="ent5" aria-live="polite"></dl>
+      <div class="logos" id="logos5"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6 INTERVAL ================= -->
+<section class="ch" id="c6" style="--len:200vh" data-clock="Interval" data-label="Honours board">
+  <div class="stage" style="--bg:#5a1420">
+    <div class="cover16 scn" style="--fx:50%;--fxm:50%"><div class="L" data-d="scene">
+      <img class="fill" loading="lazy" decoding="async" src="a/sc6_foyer-m.webp" srcset="a/sc6_foyer-m.webp 1200w, a/sc6_foyer.webp 2200w" sizes="100vw" alt="A velvet cinema foyer with a cork noticeboard of honours.">
+      <div class="board" style="left:34%;top:18%;width:32%;height:40%">
+        <div class="card" data-d="card"><strong>BEM</strong>2016 · Ethical fashion</div>
+        <div class="card" data-d="card"><strong>Alumnus</strong>Essex · Alumnus of the Year 2018</div>
+        <div class="card" data-d="card"><strong>#2</strong>Product of the Day · Product Hunt 2022</div>
+        <div class="card" data-d="card"><strong>Winner</strong>Project Europe × Lovable 2025</div>
+        <div class="card" data-d="card"><strong>Overall</strong>AI Engine Summer Hack 2025</div>
+        <div class="card" data-d="card"><strong>1st</strong>Talking photos to market 2020</div>
+      </div>
+    </div></div>
+    <div class="panel left">
+      <p class="eyebrow">Interval · Get your popcorn</p>
+      <h2>The story so far</h2>
+      <ol class="steps">
+        <li><span><strong>A business</strong> that helped families earn.</span></li>
+        <li><span><strong>A camera</strong> that could search for what you meant.</span></li>
+        <li><span><strong>A photo</strong> that could talk, and then listen.</span></li>
+      </ol>
+      <p class="small">"1st" is my own claim to be early to market with commercial zero-shot talking photos in 2020, not an independent ranking.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7 CANNES ================= -->
+<section class="ch" id="c7" style="--len:300vh" data-clock="Cannes" data-label="Reel 6 · Big Screen Hack">
+  <div class="stage" style="--bg:#141a2c">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_night-m.webp" srcset="a/sky_night-m.webp 1200w, a/sky_night.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:50%;--fxm:50%"><div class="L" data-d="scene">
+      <div class="beam" data-d="beam" style="left:30%"></div><div class="beam" data-d="beam" style="left:46%"></div>
+      <img class="fill" loading="lazy" decoding="async" src="a/sc7_cannes-m.webp" srcset="a/sc7_cannes-m.webp 1200w, a/sc7_cannes.webp 2200w" sizes="100vw" alt="A paper cut-out beach cinema at night on a Mediterranean seafront, with palm trees, yachts and an audience in deckchairs." style="position:relative;z-index:5">
+      <div class="bigclock" style="left:36.2%;top:43.9%;width:27.6%;height:29.9%;z-index:6"><span>Time left to make a film</span><b id="h48">48:00</b><span id="d48">Friday · Cannes</span></div>
+    </div></div>
+    <div class="panel left">
+      <p class="eyebrow">Reel 6 · Big Screen Hack</p>
+      <h2>Give people space. They'll surprise you.</h2>
+      <p>I bring filmmakers, engineers and technology partners together with tools to explore, a shared deadline and a real screening to work towards. Filmmakers bring story and taste. Engineers help them find new ways to make it.</p>
+      <p><strong>Scroll the clock down.</strong> Teams made films in 48 hours, and the work was screened at Cinéum Cannes during festival week.</p>
+      <img class="thumb" src="a/site/lilies-film.webp" alt="Still from lilies by Muja Studios / Jabir Mohammed, Film Track 1st and Best in Show." loading="lazy">
+      <p class="small">Film: <em>lilies</em> by Muja Studios / Jabir Mohammed. I organised the event, not the film. The Cinéum screening was an independent event during festival week, not an official Cannes selection.</p>
+      <p class="links small"><a href="https://www.bigscreenhack.com/" target="_blank" rel="noopener">About Big Screen Hack</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8 GOOD OMEN ================= -->
+<section class="ch" id="c8" style="--len:280vh" data-clock="2025" data-label="Reel 7 · Good Omen">
+  <div class="stage" style="--bg:#1d2236">
+    <div class="cover16 scn" style="--fx:62%;--fxm:60%"><div class="L" data-d="scene">
+      <img class="fill" loading="lazy" decoding="async" src="a/sc8_hack-m.webp" srcset="a/sc8_hack-m.webp 1200w, a/sc8_hack.webp 2200w" sizes="100vw" alt="A paper cut-out hackathon hall at night, with laptops, pizza boxes, a trophy and a scoreboard.">
+      <div class="score" style="left:61%;top:16.5%;width:27.8%;height:21.5%"><span>Build time</span><b id="h20">00:00</b><span id="s20">Stockholm</span></div>
+    </div></div>
+    <img class="spr" data-d="aaron" src="a/aaron_04.webp" alt="Cartoon Aaron celebrating" style="--x:8%;--b:-6vh;--h:44vh" loading="lazy">
+    <img class="spr" data-d="trophy" src="a/prop_04.webp" alt="" style="--x:30%;--b:2vh;--h:18vh" loading="lazy">
+    <canvas class="over" id="conf8" style="z-index:20"></canvas>
+    <div class="panel right">
+      <p class="eyebrow">Reel 7 · Good Omen</p>
+      <h2>Two products. Under twenty hours. First place.</h2>
+      <p>With Giovanni Funchal and Marko Stapfner, our team <strong>Good Omen</strong> won the AI Engine Summer Hack with Summer Chat. Then at Project Europe × Lovable in Stockholm we built a journalist avatar and a real-time video tool in under twenty hours, and won.</p>
+      <div class="note">Impact Loop acquired the journalist tool, giving it a life beyond the hackathon.</div>
+      <img class="thumb" src="a/site/good-omen-stockholm.webp" alt="Good Omen with Impact Loop in Stockholm. Photograph: Jesper Andersson / Impact Loop." loading="lazy">
+      <p class="small">Photograph: Jesper Andersson / Impact Loop.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9 NOW ================= -->
+<section class="ch" id="c9" style="--len:280vh" data-clock="2026" data-label="Reel 8 · Now">
+  <div class="stage" style="--bg:#3b3150">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_dusk-m.webp" srcset="a/sky_dusk-m.webp 1200w, a/sky_dusk.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:60%;--fxm:50%"><div class="L" data-d="scene">
+      <img class="fill" loading="lazy" decoding="async" src="a/sc9_now-m.webp" srcset="a/sc9_now-m.webp 1200w, a/sc9_now.webp 2200w" sizes="100vw" alt="A dusk landscape that is finished paper on the left and still a pencil sketch on the right, with digits raining down where it is still being made.">
+      <canvas class="over" id="rain9"></canvas>
+    </div></div>
+    <div class="panel right">
+      <p class="eyebrow">Reel 8 · World models + StoryMachine</p>
+      <h2>What if the world could respond as you imagine it?</h2>
+      <p>My work is moving from generating clips to real-time, interactive worlds. With <strong>StoryMachine</strong>, I'm building a way for people to explore creative directions together, with agents helping them research, plan and visualise.</p>
+      <div class="seg" role="group" aria-label="StoryMachine step">
+        <button type="button" data-sm="0" aria-pressed="true">Research</button>
+        <button type="button" data-sm="1" aria-pressed="false">Cast</button>
+        <button type="button" data-sm="2" aria-pressed="false">Direct</button>
+      </div>
+      <div id="sm9" aria-live="polite"></div>
+      <p class="small">World models are active research, not a finished capability claim.</p>
+      <p class="links small"><a href="https://www.storymachine.ai/" target="_blank" rel="noopener">StoryMachine</a> · <a href="https://github.com/yepicaiaaron/awesome-realtime-video-generation" target="_blank" rel="noopener">My real-time video research list</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 NEXT ================= -->
+<section class="ch" id="c10" style="--len:260vh" data-clock="Next" data-label="Your reel">
+  <div class="stage" style="--bg:#efe3c9">
+    <div class="cover16 sky" style="--fx:50%"><div class="L" data-d="sky"><img class="fill" loading="lazy" src="a/sky_dawn-m.webp" srcset="a/sky_dawn-m.webp 1200w, a/sky_dawn.webp 2200w" sizes="100vw" alt=""></div></div>
+    <div class="cover16 scn" style="--fx:30%;--fxm:30%"><div class="L" data-d="scene"><img class="fill" loading="lazy" decoding="async" src="a/sc10_house-m.webp" srcset="a/sc10_house-m.webp 1200w, a/sc10_house.webp 2200w" sizes="100vw" alt="The paper picture house on the hill again, with a blank screen waiting for the next film."></div></div>
+    <img class="spr" data-d="aaron" src="a/aaron_03.webp" alt="Cartoon Aaron presenting the empty screen" style="--x:42%;--b:-3vh;--h:42vh" loading="lazy">
+    <div class="grassL" data-d="grass"><img src="a/grass-m.webp" alt="" loading="lazy"></div>
+    <div class="panel right">
+      <p class="eyebrow">The next reel</p>
+      <h2>Let's make something happen</h2>
+      <p>I work with clients from the first conversation through to the build. What do you have in mind?</p>
+      <div class="chips" role="group" aria-label="What do you want to make?">
+        <button type="button" data-want="product" aria-pressed="true">A product</button>
+        <button type="button" data-want="live" aria-pressed="false">A live experience</button>
+        <button type="button" data-want="team" aria-pressed="false">Team training</button>
+        <button type="button" data-want="talk" aria-pressed="false">A talk</button>
+      </div>
+      <p class="result" id="want10" aria-live="polite"></p>
+      <div class="row">
+        <a class="btn" href="https://calendar.app.google/pZkjBD1BnG83RQxi7" target="_blank" rel="noopener">Arrange a call</a>
+        <a class="btn ghost" id="mail10" href="mailto:aaronjonesvideo@gmail.com">Email me</a>
+        <button class="btn ghost" type="button" id="copy10">Copy summary</button>
+      </div>
+      <p class="small" id="copied10" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p><strong>Aaron Jones BEM</strong> · Builder, creative technologist and speaker</p>
+  <div class="links">
+    <a href="https://www.linkedin.com/in/aaronbenjaminjones" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/yepicaiaaron" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://twitter.com/aaronjonesbiz" target="_blank" rel="noopener">X</a>
+    <a href="https://www.instagram.com/aaron_benjamin_jones" target="_blank" rel="noopener">Instagram</a>
+    <a href="mailto:aaronjonesvideo@gmail.com">Email</a>
+  </div>
+  <p class="small" style="color:var(--line)">Paper illustrations are AI-generated artwork, not photographs of events.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>window.ScrollTrigger||document.write('<script src="a/vendor/gsap.min.js"><\/script><script src="a/vendor/ScrollTrigger.min.js"><\/script>')</script>
+<script>
+(function(){
+'use strict';
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const seg = (p,a,b) => clamp((p-a)/(b-a),0,1);
+const smooth = t => t*t*(3-2*t);
+const MOBILE = () => innerWidth <= 760;
+
+/* ================= INTERACTIONS (work without GSAP) ================= */
+function press(group, btn){ group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b===btn ? 'true':'false')); }
+function pop(els){ if(window.gsap && !RM) gsap.fromTo(els,{scale:.6,rotate:-8,opacity:0},{scale:1,rotate:0,opacity:1,duration:.45,stagger:.08,ease:'back.out(2)'}); }
+
+// 2 · visual search chips
+const ITEMS = {
+  coat:{tags:['Mustard','Long wool coat','Similar shapes'],note:'The camera reads colour, cut and shape, then looks for pieces that match. No typing needed.',spot:'36%'},
+  dress:{tags:['Red','Fitted dress','Same neckline'],note:'Show it a dress you love and it finds the same neckline and colour in other shops.',spot:'46%'},
+  jacket:{tags:['Navy','Tailored jacket','Close matches'],note:'The question is a picture, and the answer is a shelf of close matches.',spot:'56%'}
+};
+$$('#c2 [data-item]').forEach(b=>b.addEventListener('click',()=>{
+  const d = ITEMS[b.dataset.item]; press(b.parentNode,b);
+  const tags = $('#tags2'); tags.innerHTML = d.tags.map(t=>'<span>'+t+'</span>').join('');
+  $('#res2').textContent = d.note; $('#spot2').style.left = d.spot; pop(tags.children);
+}));
+
+// 3 · still / talking
+function setTalk(on){ $('#scr3').classList.toggle('talk',on); }
+$$('#c3 [data-mode]').forEach(b=>b.addEventListener('click',()=>{ press(b.parentNode,b); setTalk(b.dataset.mode==='talk'); }));
+
+// 4 · live experiences
+const LIVE = [
+  {h:'Confess your marketing sins to AI Rory',p:'Rory Sutherland wanted a confessional where marketers could confess their marketing sins, heard by a digital version of him: his voice, his personality, even his vape. I secured his involvement, and we filmed him, built the avatar and made the physical booth.',fact:['Built in','Five days'],fact2:['Visitors','Hundreds, over the event'],spot:'1%'},
+  {h:'A conversation with the whole conference',p:'AI versions of London Tech Week hosts Oli Barrett and Susannah Streeter, informed by live stage transcripts. Visitors could discuss a talk, catch up on one they missed or plan what to see next.',fact:['Knowledge','Live stage transcripts'],fact2:['Role','Avatars joined to the event'],spot:'34%'},
+  {h:'Your first interview, with room to practise',p:'For SDAIA and King Saud University, students practised a first job interview with an avatar, then got feedback on how they had done.',fact:['Students','Around a hundred'],fact2:['Session','Five minutes each'],spot:'66%'}
+];
+function setLive(i){ const d=LIVE[i]; $('#live4').innerHTML='<p><strong>'+d.h+'.</strong> '+d.p+'</p><dl class="kv"><dt>'+d.fact[0]+'</dt><dd>'+d.fact[1]+'</dd><dt>'+d.fact2[0]+'</dt><dd>'+d.fact2[1]+'</dd></dl>'; $('#spot4').style.left=d.spot; }
+$$('#c4 [data-live]').forEach(b=>b.addEventListener('click',()=>{ press(b.parentNode,b); setLive(+b.dataset.live); pop($$('#live4 dd')); }));
+setLive(0);
+
+// 5 · enterprise
+const ENT = {
+  oman:{spot:'66%',rows:[['Client','Oracle, for Oman\'s Shura Council election campaign'],['My role','I built the AI video workflow myself'],['Why it matters','Not a demo: real delivery for a national election']]},
+  air:{spot:'4%',rows:[['Client','Oracle and Abu Dhabi Aviation'],['Problem','Old airport systems needed specialist short codes'],['What I built','Ask in plain language, get charts and an avatar explanation'],['Hard part','Speech, language model, voice and video on local hardware']]}
+};
+function setEnt(k){ const d=ENT[k]; $('#ent5').innerHTML=d.rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join(''); $('#spot5').style.left=d.spot; }
+$$('#c5 [data-ent]').forEach(b=>b.addEventListener('click',()=>{ press(b.parentNode,b); setEnt(b.dataset.ent); pop($$('#ent5 dd')); }));
+setEnt('oman');
+const LOGOS=['Chicago Transit Authority','Acronis','Concentrix','Roche','LEAP','GAIN','COMEX','Deriv','Lumen5','GymNation','XRSpace','Seniorly'];
+$('#logos5').innerHTML = LOGOS.map((n,i)=>'<img src="a/site/yepic-client-'+i+'.webp" alt="'+n+'" loading="lazy">').join('');
+
+// 9 · StoryMachine
+const SM=[
+  {p:'<strong>Research.</strong> Agents help gather references and ideas, so a team starts from something rather than a blank page.',img:'a/site/storymachine-direction.webp',alt:'After Hours: a visual direction from StoryMachine'},
+  {p:'<strong>Cast.</strong> Keep characters consistent from front, side and back, so the story holds together.',img:'a/site/storymachine-casting.webp',alt:'StoryMachine character reference for Mara: front, side and back'},
+  {p:'<strong>Direct.</strong> Compare possibilities and decide what is worth making, while the idea is still taking form.',img:'a/site/storymachine-direction.webp',alt:'After Hours: a visual direction from StoryMachine'}
+];
+function setSM(i){ const d=SM[i]; $('#sm9').innerHTML='<p>'+d.p+'</p><img class="thumb" src="'+d.img+'" alt="'+d.alt+'" loading="lazy"><p class="small">Studio creative example from StoryMachine.</p>'; }
+$$('#c9 [data-sm]').forEach(b=>b.addEventListener('click',()=>{ press(b.parentNode,b); setSM(+b.dataset.sm); }));
+setSM(0);
+
+// 10 · what do you want to make
+const WANT={
+  product:'A new product: we start with what you are trying to change, find what the technology can do now, then build it with you.',
+  live:'A live experience: a persona, an installation or an event people can talk to, built and delivered on the day.',
+  team:'Team training: strategy and hands-on sessions so your people can use tools like Claude Code, build agents and take the next step themselves.',
+  talk:'A talk: generative media, real-time AI and world models, for your stage or event.'
+};
+let want='product';
+function setWant(k){ want=k; $('#want10').textContent=WANT[k]; $('#mail10').href='mailto:aaronjonesvideo@gmail.com?subject='+encodeURIComponent('Enquiry: '+WANT[k].split(':')[0]); }
+$$('#c10 [data-want]').forEach(b=>b.addEventListener('click',()=>{ press(b.parentNode,b); setWant(b.dataset.want); }));
+setWant('product');
+$('#copy10').addEventListener('click',async()=>{
+  const t='Enquiry for Aaron Jones BEM\n'+WANT[want]+'\nArrange a call: https://calendar.app.google/pZkjBD1BnG83RQxi7\nEmail: aaronjonesvideo@gmail.com';
+  try{ await navigator.clipboard.writeText(t); $('#copied10').textContent='Copied. Paste it into an email or message.'; }
+  catch(e){ $('#copied10').textContent=t; }
+});
+
+/* ================= PANEL SCROLL DRIVER (text never lost) ================= */
+function panelDriver(){
+  $$('section.ch').forEach(ch=>{ const p=ch.querySelector('.panel'); if(!p) return;
+    const set=pr=>{ const max=p.scrollHeight-p.clientHeight; if(max<=2){p.classList.remove('more');return;}
+      const f=clamp((pr-.1)/.72,0,1); p.scrollTop=Math.round(max*f); p.classList.toggle('more',p.scrollTop<max-3); };
+    const st=ScrollTrigger.create({trigger:ch,start:'top top',end:'bottom bottom',onUpdate:s=>set(s.progress),onRefresh:s=>set(s.progress)});
+    p.addEventListener('click',()=>requestAnimationFrame(()=>set(st.progress)));
+  });
+}
+
+/* ================= DIGIT RENDERER (dense glowing numerals) ================= */
+const STOPS=[[0,[5,11,20]],[.22,[11,34,55]],[.42,[23,90,134]],[.62,[47,168,230]],[.82,[143,214,255]],[1,[237,246,255]]];
+const RAMP=[]; for(let i=0;i<=64;i++){ const b=i/64; let c=STOPS[5][1];
+  for(let j=0;j<5;j++){ if(b<=STOPS[j+1][0]){ const t=(b-STOPS[j][0])/(STOPS[j+1][0]-STOPS[j][0]); c=STOPS[j][1].map((v,k)=>Math.round(v+(STOPS[j+1][1][k]-v)*t)); break; } }
+  RAMP.push('rgb('+c.join(',')+')'); }
+function Digits(canvas, opts){
+  const ctx=canvas.getContext('2d'); const o=Object.assign({cell:9},opts);
+  let W=0,H=0,cols=0,rows=0,bright=null,glyph=null,rank=null,src=null,fit=null;
+  const off=document.createElement('canvas'), octx=off.getContext('2d',{willReadFrequently:true});
+  function size(){ const r=canvas.getBoundingClientRect(); W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
+    const dpr=Math.min(devicePixelRatio||1,1.5); canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const cell=MOBILE()? o.cell*.8 : o.cell; cols=Math.ceil(W/cell); rows=Math.ceil(H/(cell*1.25));
+    glyph=new Uint8Array(cols*rows).map(()=>48+Math.random()*10|0); rank=new Float32Array(cols*rows);
+    for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){ const dx=(x/cols-.5)*1.4, dy=y/rows-.5; rank[y*cols+x]=.62*Math.random()+.38*Math.min(1,Math.hypot(dx,dy)*1.6); }
+    sample(); }
+  function sample(){ if(!src||!cols) return; off.width=cols; off.height=rows;
+    // cover-fit the source into the cell grid (matching the page's own cover fit)
+    const iw=src.naturalWidth||src.width, ih=src.naturalHeight||src.height; if(!iw) return;
+    octx.clearRect(0,0,cols,rows); const s=(o.fit&&o.fit()==='contain')?Math.min(W/iw,H/ih):Math.max(W/iw,H/ih), dw=iw*s, dh=ih*s, dx=(W-dw)/2, dy=(H-dh)/2;
+    octx.drawImage(src,dx*cols/W,dy*rows/H,dw*cols/W,dh*rows/H);
+    const d=octx.getImageData(0,0,cols,rows).data; bright=new Float32Array(cols*rows);
+    for(let i=0;i<cols*rows;i++) bright[i]=d[i*4+3]<40?-1:(d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11)/255; }
+  function setSource(img){ src=img; sample(); }
+  // show a cell when lo <= rank < hi
+  function draw(lo,hi,alpha){ ctx.clearRect(0,0,W,H); if(!bright||alpha<=0) return; ctx.globalAlpha=alpha;
+    const cw=W/cols, chh=H/rows; ctx.font=(chh*.92).toFixed(1)+'px "DM Mono",monospace'; ctx.textBaseline='top';
+    for(let i=0;i<cols*rows;i++){ const r=rank[i]; if(r<lo||r>=hi||bright[i]<0) continue; const x=(i%cols)*cw, y=((i/cols)|0)*chh, b=bright[i];
+      ctx.fillStyle=RAMP[Math.round(clamp(b*.42,0,1)*64)]; ctx.fillRect(x,y,cw+.5,chh+.5);
+      ctx.fillStyle=RAMP[Math.round(clamp(Math.pow(b,1.2)*1.05+.08,0,1)*64)]; ctx.fillText(String.fromCharCode(glyph[i]),x+cw*.12,y+chh*.04); }
+    ctx.globalAlpha=1; }
+  function flicker(n){ for(let k=0;k<n;k++){ glyph[(Math.random()*glyph.length)|0]=48+Math.random()*10|0; } }
+  return {size,setSource,draw,flicker};
+}
+
+/* ================= INTRO ================= */
+const FRAMES=74, frames=new Array(FRAMES); let framesReady=0;
+const turn=$('#turn'), tctx=turn.getContext('2d'), rig=$('#rig'), screenEl=$('#screen');
+const dig=Digits($('#dig'),{cell:9}), sdig=Digits($('#sdig'),{cell:7,fit:()=>MOBILE()?'contain':'cover'});
+let introP=0, lastFrame=-1, SR={x:0,y:0,w:0,h:0}, VW=0, VH=0;
+function loadFrames(){ for(let i=0;i<FRAMES;i++){ const im=new Image(); im.decoding='async';
+  im.onload=()=>{ framesReady++; if(i===0){ dig.setSource(im); drawFrame(0,true); renderIntro(); } if(i===FRAMES-1) renderIntro(); };
+  im.src='a/turn/t_'+String(i+1).padStart(3,'0')+'.jpg'; frames[i]=im; } }
+const paperSrc=new Image(); paperSrc.onload=()=>sdig.setSource(paperSrc); paperSrc.src='a/style_frame-m.webp';
+function coverRect(){ const s=Math.max(VW/960,VH/536); return {s,dx:(VW-960*s)/2,dy:(VH-536*s)/2}; }
+function sizeIntro(){ VW=innerWidth; VH=$('#intro .stage').clientHeight||innerHeight;
+  const dpr=Math.min(devicePixelRatio||1,1.5); turn.width=VW*dpr; turn.height=VH*dpr; tctx.setTransform(dpr,0,0,dpr,0,0);
+  const c=coverRect(); SR={x:c.dx+25*c.s,y:c.dy+41*c.s,w:906*c.s,h:480*c.s};
+  if(MOBILE()){ const t=Math.max(SR.y,0), b=Math.min(SR.y+SR.h,VH); SR={x:0,y:t,w:VW,h:b-t}; } screenEl.classList.toggle('fitc',MOBILE());
+  Object.assign(screenEl.style,{left:SR.x+'px',top:SR.y+'px',width:SR.w+'px',height:SR.h+'px'});
+  dig.size(); sdig.size(); lastFrame=-1; renderIntro(); }
+function drawFrame(i,force){ i=clamp(i|0,0,FRAMES-1); if(i===lastFrame&&!force) return;
+  let im=frames[i]; if(!im||!im.complete||!im.naturalWidth){ for(let j=i;j>=0;j--){ if(frames[j]&&frames[j].complete&&frames[j].naturalWidth){ im=frames[j]; break; } } }
+  if(!im||!im.naturalWidth) return; const c=coverRect(); tctx.drawImage(im,c.dx,c.dy,960*c.s,536*c.s); lastFrame=i; }
+const iTitle=$('.i-title'), iLine=$('.i-line'), iHint=$('.i-hint'), iCard=$('.i-card'), caps=$$('.i-cap span');
+const sSketch=$('.s-sketch'), sPaper=$('.s-paper'), sDetail=$('.s-detail');
+function renderIntro(){ const p=introP;
+  // A · digit portrait dissolving into the photoreal frame
+  const m=smooth(seg(p,.07,.22));
+  dig.draw(m,1.01,1);
+  iTitle.style.opacity=1-seg(p,.05,.12); iTitle.style.transform='translateY('+(-40*seg(p,.05,.12))+'px)';
+  iHint.style.opacity=1-seg(p,.02,.06);
+  iLine.style.opacity=seg(p,.13,.18)*(1-seg(p,.3,.35));
+  // B · camera turns to the screen
+  drawFrame(Math.round(seg(p,.2,.5)*(FRAMES-1)));
+  // C · the screen develops
+  const onScreen=p>.49; screenEl.style.visibility=onScreen?'visible':'hidden';
+  const a=seg(p,.5,.58), d=seg(p,.59,.65);
+  sdig.draw(d,a,1);
+  sSketch.style.opacity=seg(p,.57,.62);
+  const pp=seg(p,.64,.7); sPaper.style.opacity=pp>0?1:0; sPaper.style.clipPath='inset('+(100-pp*100).toFixed(1)+'% 0 0 0)';
+  sDetail.style.opacity=seg(p,.71,.77);
+  const stage=p<.575?0:p<.635?1:p<.705?2:3, capOn=p>.5&&p<.8;
+  caps.forEach((c,i)=>{ c.style.opacity=capOn?1:0; c.classList.toggle('on',i===stage); });
+  // D · push through the screen
+  const k=smooth(seg(p,.79,.93));
+  if(MOBILE()) screenEl.classList.toggle('fitc',k<.35);
+  if(SR.w){ const target=Math.max(VW/SR.w,VH/SR.h)*1.02, sc=1+(target-1)*k;
+    const cx=SR.x+SR.w/2, cy=SR.y+SR.h/2, tx=(VW/2-cx*sc)*k+(cx-cx*sc)*(1-k), ty=(VH/2-cy*sc)*k+(cy-cy*sc)*(1-k);
+    rig.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+sc.toFixed(4)+')'; }
+  const cardIn=seg(p,.9,.96); iCard.style.opacity=cardIn; iCard.style.visibility=cardIn>0?'visible':'hidden';
+  iCard.style.transform='translate(-50%,calc(-50% + '+(30*(1-cardIn)).toFixed(1)+'px)) rotate(-.6deg)';
+}
+let introVisible=true, flickT=0;
+function introLoop(t){ if(introVisible&&!RM&&t-flickT>70){ flickT=t; dig.flicker(260); sdig.flicker(160); renderIntro(); } requestAnimationFrame(introLoop); }
+
+/* ================= CANVAS EFFECTS ================= */
+// 3 · digit stream from easel to screen
+function Stream(canvas){ const ctx=canvas.getContext('2d'); let W,H; const N=90, P=[];
+  for(let i=0;i<N;i++) P.push({o:Math.random(),j:(Math.random()-.5),g:48+Math.random()*10|0,s:.7+Math.random()*.6});
+  function size(){ const r=canvas.getBoundingClientRect(); W=r.width; H=r.height; canvas.width=W; canvas.height=H; }
+  function draw(p){ ctx.clearRect(0,0,W,H); if(p<=0||p>=1) return; const fs=Math.max(10,W*.011); ctx.font='600 '+fs+'px "DM Mono",monospace';
+    const x0=.87*W,y0=.52*H,x1=.3*W,y1=.42*H;
+    P.forEach(q=>{ const t=((q.o+p*1.6*q.s)%1); const vis=Math.sin(Math.PI*clamp(p*1.4,0,1));
+      const x=x0+(x1-x0)*t, y=y0+(y1-y0)*t-Math.sin(t*Math.PI)*H*.22+q.j*H*.06;
+      ctx.globalAlpha=vis*(1-Math.abs(t-.5)*1.2); ctx.fillStyle=t>.5?'#8FD6FF':'#cfeeff'; ctx.fillText(String.fromCharCode(q.g),x,y); });
+    ctx.globalAlpha=1; }
+  return {size,draw}; }
+// 9 · digit rain over the sketch half
+function Rain(canvas){ const ctx=canvas.getContext('2d'); let W,H,cols=[],cs=14;
+  function size(){ const r=canvas.getBoundingClientRect(); W=r.width; H=r.height; canvas.width=W; canvas.height=H; cs=Math.max(10,W*.009);
+    cols=[]; for(let x=W*.44;x<W*.8;x+=cs*1.1) cols.push({x,y:Math.random()*H,v:.6+Math.random()*1.2,len:8+Math.random()*18|0}); }
+  function draw(dt,amt){ ctx.clearRect(0,0,W,H); if(amt<=0) return; ctx.font='500 '+cs+'px "DM Mono",monospace';
+    cols.forEach(c=>{ c.y+=c.v*dt*.12; if(c.y-c.len*cs>H*.95) c.y=H*.25+Math.random()*H*.1;
+      for(let k=0;k<c.len;k++){ const y=c.y-k*cs; if(y<H*.22||y>H) continue; ctx.globalAlpha=amt*(1-k/c.len)*(k===0?1:.75);
+        ctx.fillStyle=k===0?'#eaf7ff':'#8FD6FF'; ctx.fillText(String.fromCharCode(48+((c.x*7+y)|0)%10),c.x,y); } });
+    ctx.globalAlpha=1; }
+  return {size,draw}; }
+// 8 · confetti
+function Confetti(canvas){ const ctx=canvas.getContext('2d'); let W,H,P=[]; const COLS=['#FF7A1F','#F2C230','#FBF6EA','#8FD6FF','#8E1B2B'];
+  function size(){ const r=canvas.getBoundingClientRect(); W=r.width; H=r.height; canvas.width=W; canvas.height=H;
+    const n=MOBILE()?70:150; P=[]; for(let i=0;i<n;i++) P.push({x:Math.random()*W,y:-Math.random()*H,v:1+Math.random()*2,w:6+Math.random()*8,h:4+Math.random()*6,ph:Math.random()*6,c:COLS[i%5]}); }
+  function draw(t,on){ ctx.clearRect(0,0,W,H); if(!on) return;
+    P.forEach(q=>{ q.y+=q.v*1.6; q.x+=Math.sin(t/500+q.ph)*.8; if(q.y>H+20){ q.y=-20; q.x=Math.random()*W; }
+      ctx.save(); ctx.translate(q.x,q.y); ctx.rotate(q.ph+t/900); ctx.scale(1,Math.cos(t/300+q.ph)); ctx.fillStyle=q.c; ctx.fillRect(-q.w/2,-q.h/2,q.w,q.h); ctx.restore(); }); }
+  return {size,draw}; }
+
+const stream3=Stream($('#stream3')), rain9=Rain($('#rain9')), conf8=Confetti($('#conf8'));
+function sizeFx(){ stream3.size(); rain9.size(); conf8.size(); }
+
+/* ================= GSAP SCROLL ================= */
+function endStates(){ introP=.97; renderIntro(); $('#count3').textContent='1,000,000+'; $('#count5').textContent='100,000+'; $('#h48').textContent='00:00'; $('#d48').textContent='Screening · Cinéum Cannes'; $('#h20').textContent='19:59'; $('#s20').textContent='Winners · Stockholm'; $('#scr3').style.opacity=1; setTalk(true); }
+function start(){
+  sizeIntro(); sizeFx(); loadFrames();
+  if(!window.gsap||!window.ScrollTrigger){ document.documentElement.classList.add('nogsap'); endStates(); return; }
+  gsap.registerPlugin(ScrollTrigger);
+  panelDriver();
+  if(RM){ endStates(); return; }
+
+  // chalk progress bar
+  gsap.to('.chalk',{scaleX:1,ease:'none',scrollTrigger:{start:0,end:'max',scrub:.3}});
+  // intro
+  ScrollTrigger.create({trigger:'#intro',start:'top top',end:'bottom bottom',scrub:true,
+    onUpdate:s=>{ introP=s.progress; renderIntro(); }, onToggle:s=>{ introVisible=s.isActive; }});
+  requestAnimationFrame(introLoop);
+
+  // HUD clock
+  const clock=$('.clock');
+  $$('section.ch').forEach(ch=>ScrollTrigger.create({trigger:ch,start:'top 55%',end:'bottom 55%',
+    onToggle:s=>{ if(s.isActive){ $('#clk').textContent=ch.dataset.clock; $('#lbl').textContent=ch.dataset.label; clock.classList.add('on'); } }}));
+  ScrollTrigger.create({trigger:'#intro',start:'top top',end:'bottom 55%',onToggle:s=>{ if(s.isActive) clock.classList.remove('on'); }});
+
+  const q=(id,d)=>$$(id+' [data-d="'+d+'"]');
+  function tl(id,scrub){ const t=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:id,start:'top top',end:'bottom bottom',scrub:scrub||.7}}); t.to({},{duration:1},0); return t; }
+  function depth(t,id,amt){ t.to(q(id,'sky'),{yPercent:-2*amt,duration:1},0).to(q(id,'scene'),{yPercent:-3*amt,duration:1},0).to(q(id,'grass'),{yPercent:-22*amt,duration:1},0); }
+  // enter: the new stage lifts in like a sheet of card
+  $$('section.ch .stage').forEach(st=>gsap.from(st.querySelectorAll('.cover16.scn .L'),{scale:1.06,ease:'power2.out',scrollTrigger:{trigger:st.parentNode,start:'top bottom',end:'top top',scrub:.5}}));
+
+  // 1
+  { const t=tl('#c1'); depth(t,'#c1',1); t.from(q('#c1','aaron'),{y:'60vh',rotate:8,duration:.18,ease:'power3.out'},.06); }
+  // 2
+  { const t=tl('#c2'); depth(t,'#c2',1); t.from(q('#c2','aaron'),{x:'-40vw',duration:.2,ease:'power2.out'},.05); }
+  // 3 · stream, face appears on screen, count-up
+  { const t=tl('#c3',.5); depth(t,'#c3',1); t.from(q('#c3','aaron'),{y:'60vh',duration:.16,ease:'power3.out'},.05);
+    const cnt=$('#count3'), scr=$('#scr3');
+    ScrollTrigger.create({trigger:'#c3',start:'top top',end:'bottom bottom',onUpdate:s=>{ const p=s.progress;
+      stream3.draw(seg(p,.08,.55)); scr.style.opacity=seg(p,.35,.5); scr.style.filter='blur('+(6*(1-seg(p,.35,.52))).toFixed(1)+'px)';
+      const n=Math.round(Math.min(1,seg(p,.3,.85))*1000000); cnt.textContent=n.toLocaleString('en-GB')+(p>.84?'+':''); }});
+    setTalk(true); }
+  // 4
+  { const t=tl('#c4'); depth(t,'#c4',1); }
+  // 5 · count-up to 100,000+
+  { const t=tl('#c5'); depth(t,'#c5',1); const cnt=$('#count5');
+    ScrollTrigger.create({trigger:'#c5',start:'top top',end:'bottom bottom',onUpdate:s=>{ const n=Math.round(Math.min(1,seg(s.progress,.05,.6))*100000); cnt.textContent=n.toLocaleString('en-GB')+(s.progress>.59?'+':''); }});
+    t.from('#logos5 img',{opacity:0,y:20,stagger:.03,duration:.1},.35); }
+  // 6 · cards pinned onto the board
+  { const t=tl('#c6');
+    t.from(q('#c6','card'),{y:'-70vh',rotate:()=>gsap.utils.random(-25,25),opacity:0,stagger:.07,duration:.14,ease:'power2.out'},.05); }
+  // 7 · 48 hour clock, beams
+  { const t=tl('#c7'); depth(t,'#c7',1);
+    gsap.to(q('#c7','beam'),{rotate:(i)=>i?10:-10,duration:4,yoyo:true,repeat:-1,ease:'sine.inOut'});
+    ScrollTrigger.create({trigger:'#c7',start:'top top',end:'bottom bottom',onUpdate:s=>{ const left=Math.round((1-seg(s.progress,.1,.85))*48*12)*5;
+      $('#h48').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+      $('#d48').textContent=left===0?'Screening · Cinéum Cannes':left>24*60?'Day one · Cannes':'Day two · Cannes'; }}); }
+  // 8 · build clock, trophy, confetti
+  { const t=tl('#c8'); t.to(q('#c8','scene'),{yPercent:-2,duration:1},0);
+    t.from(q('#c8','trophy'),{y:'-80vh',rotate:-30,duration:.16,ease:'bounce.out'},.6).from(q('#c8','aaron'),{y:'60vh',duration:.16,ease:'power3.out'},.62);
+    let on=false; ScrollTrigger.create({trigger:'#c8',start:'top top',end:'bottom bottom',onUpdate:s=>{ const p=s.progress; on=p>.62&&p<.99;
+      const mins=Math.min(1199,Math.round(seg(p,.08,.6)*1199)); $('#h20').textContent=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+      $('#s20').textContent=p>.6?'Winners · Stockholm':'Stockholm'; }, onLeave:()=>on=false, onLeaveBack:()=>on=false});
+    (function loop(t){ conf8.draw(t,on); requestAnimationFrame(loop); })(0); }
+  // 9 · digit rain builds the world
+  { const t=tl('#c9'); depth(t,'#c9',1); let amt=0,last=0,active=false;
+    ScrollTrigger.create({trigger:'#c9',start:'top bottom',end:'bottom top',onToggle:s=>active=s.isActive,onUpdate:s=>{ amt=Math.sin(Math.PI*clamp(s.progress,0,1)); }});
+    (function loop(t){ if(active) rain9.draw(Math.min(50,t-last),amt); last=t; requestAnimationFrame(loop); })(0); }
+  // 10 · walk on, dusk to dawn
+  { const t=tl('#c10'); depth(t,'#c10',1); t.from(q('#c10','aaron'),{x:'-50vw',duration:.25,ease:'power2.out'},.04);
+    t.fromTo(q('#c10','sky'),{filter:'brightness(.8)'},{filter:'brightness(1.05)',duration:.8},0); }
+
+  let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ sizeIntro(); sizeFx(); ScrollTrigger.refresh(); },150); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+</body>
+</html>
