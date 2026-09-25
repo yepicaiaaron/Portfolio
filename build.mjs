@@ -15,7 +15,7 @@ head=head.replace('</head>','<link rel="stylesheet" href="css/feedback.css"></he
 head=head.replaceAll('#mind-os','#work').replaceAll('#server-room','#frontier').replaceAll('#about','#contact');
 head=head.replace('menu ↓','Explore the story ↓').replace('href="#contact">Explore the story','href="#work">Explore the story');
 head=head.replace('I carry difficult ideas','Before anything, I’m a builder.').replace('all the way <em>through.</em>','I’ve spent my career building what comes next.');
-head=head.replace('aria-label="creative technologist">creative technologist','aria-label="Builder, technologist, strategist">Builder. Technologist. Strategist.');
+head=head.replace('aria-label="creative technologist">creative technologist','aria-label="Builder, Creative Technologist, Speaker">Builder | Creative Technologist | Speaker');
 const story=fs.readFileSync('story.html','utf8');
 const scripts=['media-assets','media-runtime','pioneer-intro','pioneer-morph','digit-hero','opening','collection-data','narrative','story-motion','project-reader','booking'];
 // Keep originals for re-encoding; only compact, demand-loaded variants reach the page.
